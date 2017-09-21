@@ -60,6 +60,7 @@
 __history/
 __recovery/
 backup/
+lib/
 x86_64-win64/
 *.~*
 
