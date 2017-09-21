@@ -1,0 +1,36 @@
+object ThemeForm: TThemeForm
+  Left = 287
+  Height = 523
+  Top = 24
+  Width = 793
+  BorderStyle = bsNone
+  BorderWidth = 8
+  Caption = 'Z80 Forever'
+  ClientHeight = 523
+  ClientWidth = 793
+  Color = clBtnFace
+  KeyPreview = True
+  OnCloseQuery = FormCloseQuery
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  OnMouseDown = FormMouseDown
+  OnMouseMove = FormMouseMove
+  OnMouseUp = FormMouseUp
+  OnPaint = FormPaint
+  OnResize = FormResize
+  OnShow = FormShow
+  Position = poScreenCenter
+  Visible = False
+  object AppProps: TApplicationProperties
+    OnRestore = AppPropsRestore
+    left = 32
+    top = 16
+  end
+  object ClickTimer: TTimer
+    Enabled = False
+    Interval = 100
+    OnTimer = ClickTimerTimer
+    left = 104
+    top = 16
+  end
+end

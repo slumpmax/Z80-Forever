@@ -1,0 +1,385 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <ProjectSession>
+    <PathDelim Value="\"/>
+    <Version Value="10"/>
+    <BuildModes Active="Default"/>
+    <Units Count="35">
+      <Unit0>
+        <Filename Value="Z80_Forever.lpr"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos Y="23"/>
+        <UsageCount Value="131"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit0>
+      <Unit1>
+        <Filename Value="form_theme.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="ThemeForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <TopLine Value="122"/>
+        <CursorPos X="31" Y="472"/>
+        <UsageCount Value="131"/>
+        <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit1>
+      <Unit2>
+        <Filename Value="frame_main.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="FrameMain"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="1"/>
+        <CursorPos X="45" Y="9"/>
+        <UsageCount Value="128"/>
+        <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit2>
+      <Unit3>
+        <Filename Value="D:\@XPEngine\XPCompiler.pas"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="139"/>
+        <CursorPos Y="218"/>
+        <UsageCount Value="1"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit3>
+      <Unit4>
+        <Filename Value="D:\Apps\Lazarus\fpc\3.0.2\source\rtl\inc\objpash.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="178"/>
+        <CursorPos X="23" Y="193"/>
+        <UsageCount Value="10"/>
+      </Unit4>
+      <Unit5>
+        <Filename Value="d:\Apps\Lazarus\lcl\interfaces\win32\win32memostrings.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="131"/>
+        <CursorPos Y="146"/>
+        <UsageCount Value="9"/>
+      </Unit5>
+      <Unit6>
+        <Filename Value="D:\Apps\Lazarus\lcl\include\control.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="1546"/>
+        <CursorPos Y="1563"/>
+        <UsageCount Value="10"/>
+      </Unit6>
+      <Unit7>
+        <Filename Value="D:\@MXEngine\MXCompiler.pas"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="310"/>
+        <CursorPos X="10" Y="311"/>
+        <UsageCount Value="9"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit7>
+      <Unit8>
+        <Filename Value="D:\Apps\Lazarus\lcl\forms.pp"/>
+        <UnitName Value="Forms"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="304"/>
+        <CursorPos X="17" Y="317"/>
+        <UsageCount Value="9"/>
+      </Unit8>
+      <Unit9>
+        <Filename Value="D:\Apps\Lazarus\fpc\3.0.2\source\rtl\inc\objpas.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="266"/>
+        <CursorPos X="9" Y="277"/>
+        <UsageCount Value="10"/>
+      </Unit9>
+      <Unit10>
+        <Filename Value="D:\Apps\Lazarus\lcl\include\wincontrol.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="5300"/>
+        <CursorPos Y="5314"/>
+        <UsageCount Value="10"/>
+      </Unit10>
+      <Unit11>
+        <Filename Value="D:\Apps\Lazarus\fpc\3.0.2\source\rtl\win\wininc\defines.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="5004"/>
+        <CursorPos X="17" Y="5021"/>
+        <UsageCount Value="10"/>
+      </Unit11>
+      <Unit12>
+        <Filename Value="D:\Apps\Lazarus\fpc\3.0.2\source\rtl\inc\typshrdh.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="64"/>
+        <CursorPos X="18" Y="79"/>
+        <UsageCount Value="1"/>
+      </Unit12>
+      <Unit13>
+        <Filename Value="D:\Apps\Lazarus\fpc\3.0.2\source\rtl\inc\typshrd.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="118"/>
+        <CursorPos X="3" Y="123"/>
+        <UsageCount Value="1"/>
+      </Unit13>
+      <Unit14>
+        <Filename Value="D:\Apps\Lazarus\lcl\lmessages.pp"/>
+        <UnitName Value="LMessages"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="104"/>
+        <CursorPos X="11" Y="112"/>
+        <UsageCount Value="7"/>
+      </Unit14>
+      <Unit15>
+        <Filename Value="D:\Apps\Lazarus\lcl\lcltype.pp"/>
+        <UnitName Value="LCLType"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="2782"/>
+        <CursorPos X="14" Y="2801"/>
+        <UsageCount Value="10"/>
+      </Unit15>
+      <Unit16>
+        <Filename Value="D:\Apps\Lazarus\lcl\controls.pp"/>
+        <UnitName Value="Controls"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="1521"/>
+        <CursorPos X="15" Y="1536"/>
+        <UsageCount Value="9"/>
+      </Unit16>
+      <Unit17>
+        <Filename Value="D:\Apps\Lazarus\lcl\include\hintwindow.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="72"/>
+        <CursorPos X="3" Y="74"/>
+        <UsageCount Value="1"/>
+      </Unit17>
+      <Unit18>
+        <Filename Value="D:\Apps\Lazarus\lcl\include\docktree.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="63"/>
+        <CursorPos X="22" Y="67"/>
+        <UsageCount Value="1"/>
+      </Unit18>
+      <Unit19>
+        <Filename Value="D:\usr\lib\lazarus\1.6\lcl\graphics.pp"/>
+        <UnitName Value="Graphics"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="1283"/>
+        <CursorPos X="15" Y="1289"/>
+        <UsageCount Value="5"/>
+      </Unit19>
+      <Unit20>
+        <Filename Value="D:\usr\lib\lazarus\1.6\lcl\include\wincontrol.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="6721"/>
+        <CursorPos Y="6733"/>
+        <UsageCount Value="3"/>
+      </Unit20>
+      <Unit21>
+        <Filename Value="D:\usr\lib\lazarus\1.6\lcl\lmessages.pp"/>
+        <UnitName Value="LMessages"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="104"/>
+        <CursorPos X="15" Y="115"/>
+        <UsageCount Value="3"/>
+      </Unit21>
+      <Unit22>
+        <Filename Value="D:\Apps\Lazarus\lcl\include\winapih.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="232"/>
+        <CursorPos X="10" Y="247"/>
+        <UsageCount Value="4"/>
+      </Unit22>
+      <Unit23>
+        <Filename Value="D:\Apps\Lazarus\fpc\3.0.2\source\rtl\objpas\classes\classesh.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="87"/>
+        <CursorPos X="11" Y="103"/>
+        <UsageCount Value="6"/>
+      </Unit23>
+      <Unit24>
+        <Filename Value="D:\Apps\Lazarus\lcl\graphics.pp"/>
+        <UnitName Value="Graphics"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="946"/>
+        <CursorPos X="15" Y="961"/>
+        <UsageCount Value="5"/>
+      </Unit24>
+      <Unit25>
+        <Filename Value="D:\Apps\Lazarus\lcl\include\picture.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="476"/>
+        <CursorPos X="3" Y="481"/>
+        <UsageCount Value="5"/>
+      </Unit25>
+      <Unit26>
+        <Filename Value="D:\Apps\Lazarus\lcl\include\customform.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="1838"/>
+        <CursorPos Y="1850"/>
+        <UsageCount Value="6"/>
+      </Unit26>
+      <Unit27>
+        <Filename Value="D:\Apps\Lazarus\lcl\widgetset\wsforms.pp"/>
+        <UnitName Value="WSForms"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="157"/>
+        <CursorPos X="3" Y="160"/>
+        <UsageCount Value="6"/>
+      </Unit27>
+      <Unit28>
+        <Filename Value="D:\Apps\Lazarus\lcl\lclclasses.pp"/>
+        <UnitName Value="LCLClasses"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="42"/>
+        <CursorPos X="14" Y="57"/>
+        <UsageCount Value="6"/>
+      </Unit28>
+      <Unit29>
+        <Filename Value="D:\Apps\Lazarus\lcl\widgetset\wslclclasses.pp"/>
+        <UnitName Value="WSLCLClasses"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="46"/>
+        <CursorPos X="3" Y="67"/>
+        <UsageCount Value="6"/>
+      </Unit29>
+      <Unit30>
+        <Filename Value="D:\Apps\Lazarus\lcl\customdrawncontrols.pas"/>
+        <UnitName Value="CustomDrawnControls"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="825"/>
+        <CursorPos Y="838"/>
+        <UsageCount Value="9"/>
+      </Unit30>
+      <Unit31>
+        <Filename Value="..\..\@MXEngine\MXCompiler.pas"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="1043"/>
+        <CursorPos X="12" Y="1064"/>
+        <UsageCount Value="11"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit31>
+      <Unit32>
+        <Filename Value="D:\Apps\Lazarus\lcl\stdctrls.pp"/>
+        <UnitName Value="StdCtrls"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="958"/>
+        <CursorPos X="3" Y="969"/>
+        <UsageCount Value="10"/>
+      </Unit32>
+      <Unit33>
+        <Filename Value="D:\Apps\Lazarus\lcl\lclintf.pas"/>
+        <UnitName Value="LCLIntf"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="78"/>
+        <UsageCount Value="10"/>
+      </Unit33>
+      <Unit34>
+        <Filename Value="D:\Apps\Lazarus\lcl\include\controlconsts.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="111"/>
+        <CursorPos X="46" Y="125"/>
+        <UsageCount Value="10"/>
+      </Unit34>
+    </Units>
+    <JumpHistory Count="22" HistoryIndex="21">
+      <Position1>
+        <Filename Value="frame_main.pas"/>
+        <Caret Line="147" Column="3" TopLine="143"/>
+      </Position1>
+      <Position2>
+        <Filename Value="frame_main.pas"/>
+        <Caret Line="77" Column="15" TopLine="67"/>
+      </Position2>
+      <Position3>
+        <Filename Value="frame_main.pas"/>
+        <Caret Line="218" Column="66" TopLine="211"/>
+      </Position3>
+      <Position4>
+        <Filename Value="frame_main.pas"/>
+        <Caret Line="63" Column="26" TopLine="46"/>
+      </Position4>
+      <Position5>
+        <Filename Value="frame_main.pas"/>
+        <Caret Line="152" Column="11" TopLine="143"/>
+      </Position5>
+      <Position6>
+        <Filename Value="frame_main.pas"/>
+        <Caret Line="63" Column="15" TopLine="53"/>
+      </Position6>
+      <Position7>
+        <Filename Value="frame_main.pas"/>
+        <Caret Line="149" Column="3" TopLine="143"/>
+      </Position7>
+      <Position8>
+        <Filename Value="frame_main.pas"/>
+        <Caret Line="77" Column="15" TopLine="67"/>
+      </Position8>
+      <Position9>
+        <Filename Value="frame_main.pas"/>
+        <Caret Line="362" Column="27" TopLine="362"/>
+      </Position9>
+      <Position10>
+        <Filename Value="frame_main.pas"/>
+        <Caret Line="77" Column="15" TopLine="67"/>
+      </Position10>
+      <Position11>
+        <Filename Value="frame_main.pas"/>
+        <Caret Line="369" Column="3" TopLine="362"/>
+      </Position11>
+      <Position12>
+        <Filename Value="frame_main.pas"/>
+        <Caret Line="77" Column="15" TopLine="67"/>
+      </Position12>
+      <Position13>
+        <Filename Value="frame_main.pas"/>
+        <Caret Line="369" Column="3" TopLine="356"/>
+      </Position13>
+      <Position14>
+        <Filename Value="frame_main.pas"/>
+        <Caret Line="59" Column="23" TopLine="58"/>
+      </Position14>
+      <Position15>
+        <Filename Value="frame_main.pas"/>
+        <Caret Line="284" Column="3" TopLine="279"/>
+      </Position15>
+      <Position16>
+        <Filename Value="frame_main.pas"/>
+        <Caret Line="63" Column="29" TopLine="49"/>
+      </Position16>
+      <Position17>
+        <Filename Value="frame_main.pas"/>
+        <Caret Line="147" Column="3" TopLine="143"/>
+      </Position17>
+      <Position18>
+        <Filename Value="frame_main.pas"/>
+        <Caret Line="77" Column="15" TopLine="67"/>
+      </Position18>
+      <Position19>
+        <Filename Value="frame_main.pas"/>
+        <Caret Line="369" Column="3" TopLine="353"/>
+      </Position19>
+      <Position20>
+        <Filename Value="frame_main.pas"/>
+        <Caret Line="59" Column="28" TopLine="55"/>
+      </Position20>
+      <Position21>
+        <Filename Value="frame_main.pas"/>
+        <Caret Line="218" Column="103" TopLine="207"/>
+      </Position21>
+      <Position22>
+        <Filename Value="frame_main.pas"/>
+        <Caret Line="9" Column="45"/>
+      </Position22>
+    </JumpHistory>
+  </ProjectSession>
+  <Debugging>
+    <Watches Count="2">
+      <Item1>
+        <Expression Value="FOnClick"/>
+        <DisplayStyle Value="wdfPointer"/>
+      </Item1>
+      <Item2>
+        <Expression Value="Self.Name"/>
+      </Item2>
+    </Watches>
+  </Debugging>
+</CONFIG>
