@@ -19,8 +19,8 @@
         <ComponentName Value="ThemeForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <TopLine Value="122"/>
-        <CursorPos X="31" Y="472"/>
+        <TopLine Value="475"/>
+        <CursorPos Y="489"/>
         <UsageCount Value="131"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -34,7 +34,7 @@
         <ResourceBaseClass Value="Frame"/>
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
-        <CursorPos X="3" Y="6"/>
+        <CursorPos X="62" Y="12"/>
         <UsageCount Value="128"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -283,7 +283,7 @@
         <UsageCount Value="10"/>
       </Unit34>
     </Units>
-    <JumpHistory Count="22" HistoryIndex="21">
+    <JumpHistory Count="25" HistoryIndex="24">
       <Position1>
         <Filename Value="frame_main.pas"/>
         <Caret Line="147" Column="3" TopLine="143"/>
@@ -372,6 +372,18 @@
         <Filename Value="frame_main.pas"/>
         <Caret Line="9" Column="45"/>
       </Position22>
+      <Position23>
+        <Filename Value="form_theme.pas"/>
+        <Caret Line="138" Column="22" TopLine="126"/>
+      </Position23>
+      <Position24>
+        <Filename Value="form_theme.pas"/>
+        <Caret Line="838" Column="16" TopLine="818"/>
+      </Position24>
+      <Position25>
+        <Filename Value="form_theme.pas"/>
+        <Caret Line="489" Column="24" TopLine="484"/>
+      </Position25>
     </JumpHistory>
   </ProjectSession>
   <Debugging>

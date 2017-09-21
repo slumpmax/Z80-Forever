@@ -828,14 +828,14 @@ begin
   //finally
   //  cv.Free;
   //end;
-  FBackFrame.Show;
-  FFrame.Hide;
+  //FBackFrame.Show;
+  //FFrame.Hide;
 end;
 
 procedure TThemeForm.ResizeEnd;
 begin
-  FFrame.Show;
-  FBackFrame.Hide;
+  //FFrame.Show;
+  //FBackFrame.Hide;
 end;
 
 procedure TThemeForm.FBarLeftMouseDown(Sender: TObject; Button: TMouseButton;
