@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<CONFIG>
-  <Compiler Value="D:\Apps\Lazarus\fpc\3.0.4\bin\x86_64-win64\fpc.exe" Date="1258652224"/>
-  <Params Value=" -MDelphi -Scgi -CX -Os1 -g -gl -Xg -XX -WG -l -vewnhibq -vm5024 -FiD:\@GitHub\Z80-Forever\Source\lib\x86_64-win64 -FuD:\@GitHub\Z80-Forever\Source\engine -FuC:\Users\tom\AppData\Local\lazarus\onlinepackagemanager\packages\bgracontrols-master\lib\x86_64-win64\3.0.4 -FuD:\Apps\Lazarus\components\ideintf\units\x86_64-win64\win32 -FuD:\Apps\Lazarus\components\lazcontrols\lib\x86_64-win64\win32 -FuC:\Users\tom\AppData\Local\lazarus\onlinepackagemanager\packages\bgrabitmap-master\bgrabitmap\lib\x86_64-win64\3.0.4 -FuD:\Apps\Lazarus\lcl\units\x86_64-win64\win32 -FuD:\Apps\Lazarus\lcl\units\x86_64-win64 -FuD:\Apps\Lazarus\components\lazutils\lib\x86_64-win64 -FuD:\Apps\Lazarus\packager\units\x86_64-win64 -FuD:\@GitHub\Z80-Forever\Source\ -FUD:\@GitHub\Z80-Forever\Source\lib\x86_64-win64\ -FED:\@GitHub\Z80-Forever\ -oZ80-Forever.exe -dLCL -dLCLwin32 Z80_Forever.lpr"/>
-</CONFIG>
