@@ -44,7 +44,7 @@ type
   TSymbolObject = class(TObject)
   private
     FName: string;
-    FTaked: Boolean;
+    FTaked, FUsed: Boolean;
   public
     Value: Variant;
     ValueType: TSymbolType;
@@ -390,6 +390,32 @@ begin
     with FSymbols.SymbolByIndex[n] do
     begin
       if ValueType = sbtConst then AddReport(Format('%-17s: %s', [Name, Value]));
+    end;
+  end;
+  AddReport('');
+  AddReport('No used symbol list');
+  AddReport('===================');
+  for n := 0 to FSymbols.Count - 1 do
+  begin
+    with FSymbols.SymbolByIndex[n] do
+    begin
+      if not FUsed then
+      case ValueType of
+        sbtConst: AddReport(Format('%-17s: %s', [Name, Value]));
+      end;
+    end;
+  end;
+  AddReport('');
+  AddReport('No used label list');
+  AddReport('==================');
+  for n := 0 to FSymbols.Count - 1 do
+  begin
+    with FSymbols.SymbolByIndex[n] do
+    begin
+      if not FUsed then
+      case ValueType of
+        sbtLabel: AddReport(Format('%-17s: %4.4xH', [Name, Integer(Value)]));
+      end;
     end;
   end;
   AddReport('');
@@ -766,10 +792,9 @@ begin
           begin
             if reg.DifferIndex(reg2) then
               AddError('Bad register ' + reg2.Text)
-            else
-            begin
-              AddCode(9 + (reg2.Offset shl 4));
-            end;
+            else if reg2.RegType = rgt16A then
+              AddCode(9 + (reg2.Offset shl 4))
+            else AddError(Format('Bad argument "%s"', [reg2.Text]));
           end;
           AddCodeText(Format('%-6.6s%s,%s', [FOpCode, reg.Text, reg2.Text]));
         end;
@@ -1752,6 +1777,7 @@ begin
           if FPass = 2 then
           begin
             v := FSymbols.Value[s];
+            FSymbols[s].FUsed := True;
             if VarIsNull(v) then
             begin
               s := '';
@@ -2318,6 +2344,7 @@ end;
 
 function TMXCompiler.StrNumToInt64(AText: string): Int64;
 var
+  sym: TSymbolObject;
   c: Char;
 begin
   Result := 0;
@@ -2346,7 +2373,16 @@ begin
     Delete(AText, 1, 1);
     Result := StrHexToInt64(AText);
   end
-  else Result := StrNumToInt64(FSymbols.ValueString[AText]);
+  else
+  begin
+    sym := FSymbols[AText];
+    if sym <> nil then
+    begin
+      Result := StrNumToInt64(VarToStrDef(sym.Value, ''));
+      sym.FUsed := True;
+    end
+    else Result := 0;
+  end;
 end;
 
 function TMXCompiler.StrOctToInt64(AText: string): Int64;
@@ -2388,6 +2424,7 @@ begin
   Value := NULL;
   ValueType := sbtNone;
   FTaked := False;
+  FUsed := False;
 end;
 
 { TSymbolList }

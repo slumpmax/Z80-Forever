@@ -821,21 +821,14 @@ begin
   finally
     DeleteDC(dc);
   end;
-  //cv := TCanvas.Create;
-  //try
-  //  cv.Handle := GetDC(0);
-  //  FBackImage.Canvas.CopyRect(Bounds(0, 0, FFrame.Width, FFrame.Height), cv, Bounds(Left + FFrame.Left, Top + FFrame.Top, FFrame.Width, FFrame.Height));
-  //finally
-  //  cv.Free;
-  //end;
-  //FBackFrame.Show;
-  //FFrame.Hide;
+  FBackFrame.Show;
+  FFrame.Hide;
 end;
 
 procedure TThemeForm.ResizeEnd;
 begin
-  //FFrame.Show;
-  //FBackFrame.Hide;
+  FFrame.Show;
+  FBackFrame.Hide;
 end;
 
 procedure TThemeForm.FBarLeftMouseDown(Sender: TObject; Button: TMouseButton;

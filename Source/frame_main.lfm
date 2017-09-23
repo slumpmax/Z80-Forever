@@ -46,6 +46,8 @@ object FrameMain: TFrameMain
         Font.Height = -15
         Font.Name = 'Consolas'
         OnChange = MemoEditChange
+        OnClick = MemoOutputClick
+        OnDblClick = MemoEditDblClick
         OnKeyDown = MemoEditKeyDown
         OnMouseDown = MemoEditMouseDown
         ParentFont = False
@@ -65,17 +67,19 @@ object FrameMain: TFrameMain
     end
     object TabOutput: TTabSheet
       Caption = 'Output'
-      ClientHeight = 448
-      ClientWidth = 771
+      ClientHeight = 576
+      ClientWidth = 690
       object MemoOutput: TMemo
         Left = 0
-        Height = 448
+        Height = 576
         Top = 0
-        Width = 771
+        Width = 690
         Align = alClient
         Color = 12648447
         Font.Height = -15
         Font.Name = 'Consolas'
+        OnClick = MemoOutputClick
+        OnDblClick = MemoEditDblClick
         ParentFont = False
         ReadOnly = True
         ScrollBars = ssBoth
@@ -168,8 +172,8 @@ object FrameMain: TFrameMain
     top = 120
   end
   object ActionMain: TActionList
-    left = 288
-    top = 120
+    left = 184
+    top = 328
     object ActionSave: TAction
       Category = 'File'
       Caption = 'Save'

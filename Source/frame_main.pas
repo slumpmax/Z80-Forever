@@ -4,8 +4,8 @@ interface
 
 uses
   MXCompiler, Classes, SysUtils, FileUtil, Forms, Controls, StdCtrls, ComCtrls,
-  Dialogs, LCLType, ActnList, ExtCtrls, BCButton, BGRACustomDrawn,
-  BCImageButton, Graphics, LMessages, Windows;
+  Dialogs, LCLType, ActnList, ExtCtrls, Graphics, LMessages,
+  Windows;
 
 const
   LM_PAINTLINE = LM_USER;
@@ -64,17 +64,21 @@ type
     procedure ActionSearchNextExecute(Sender: TObject);
     procedure ActionSelectAllExecute(Sender: TObject);
     procedure MemoEditChange(Sender: TObject);
+    procedure MemoEditDblClick(Sender: TObject);
     procedure MemoEditKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState
       );
     procedure MemoEditMouseDown(Sender: TObject; Button: TMouseButton;
      Shift: TShiftState; X, Y: Integer);
+    procedure MemoOutputClick(Sender: TObject);
     procedure PaintBoxLinePaint(Sender: TObject);
   private
     Compiler: TMXCompiler;
     FChanged: Boolean;
     FSearchText: string;
+    FSelStart: Integer;
     procedure LMPaintLine(var msg: TMsg); message LM_PAINTLINE;
     procedure SearchText(AMemo: TMemo; AText: string; AStartPos: Integer = 0);
+    procedure SelectWord(AMemo: TMemo);
     { private declarations }
   public
     constructor Create(AOwner: TComponent); override;
@@ -149,7 +153,7 @@ begin
     if PageMain.TabIndex = 0 then
       memo := MemoEdit
     else memo := MemoOutput;
-    SearchText(memo, FSearchText)
+    SearchText(memo, FSearchText, memo.SelStart)
   end;
 end;
 
@@ -311,6 +315,11 @@ begin
   ButtonSave.Enabled := True;
 end;
 
+procedure TFrameMain.MemoEditDblClick(Sender: TObject);
+begin
+  SelectWord(TMemo(Sender));
+end;
+
 procedure TFrameMain.MemoEditKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 begin
@@ -325,6 +334,11 @@ procedure TFrameMain.MemoEditMouseDown(Sender: TObject; Button: TMouseButton;
  Shift: TShiftState; X, Y: Integer);
 begin
   PaintBoxLine.Invalidate;
+end;
+
+procedure TFrameMain.MemoOutputClick(Sender: TObject);
+begin
+  FSelStart := TMemo(Sender).SelStart;
 end;
 
 procedure TFrameMain.PaintBoxLinePaint(Sender: TObject);
@@ -367,32 +381,84 @@ end;
 procedure TFrameMain.SearchText(AMemo: TMemo; AText: string; AStartPos: Integer
   );
 var
-  found: Boolean;
-  lpos: Integer;
+  found, done: Boolean;
+  lpos, npos: Integer;
   s, sm: string;
 begin
-  Inc(AStartPos);
-  found := False;
-  sm := AMemo.Text;
-  s := Copy(sm, AStartPos, Length(AText));
-  lpos := Length(sm);
-  Inc(AStartPos, Length(AText));
-  while (AStartPos <= lpos) and not found do
+  done := False;
+  while not done do
   begin
-    found := CompareText(AText, s) = 0;
-    if not found then
+    npos := AStartPos;
+    Inc(npos);
+    found := False;
+    sm := AMemo.Text;
+    s := Copy(sm, npos, Length(AText));
+    lpos := Length(sm);
+    Inc(npos, Length(AText));
+    while (npos <= lpos) and not found do
     begin
-      Delete(s, 1, 1);
-      s := s + Copy(sm, AStartPos, 1);
-      Inc(AStartPos);
+      found := CompareText(AText, s) = 0;
+      if not found then
+      begin
+        Delete(s, 1, 1);
+        s := s + Copy(sm, npos, 1);
+        Inc(npos);
+      end;
     end;
+    if not found and (AStartPos > 0) then
+    begin
+      done := MessageDlg('Can not find search text any more.'#13#10'Do you want to continue search from start?',
+        mtWarning, [mbYes, mbNo], 0) = mrNo;
+      if not done then AStartPos := 0;
+    end
+    else done := True;
   end;
   if found then
   begin
-    AMemo.SelStart := AStartPos - Length(AText) - 1;
+    AMemo.SelStart := npos - Length(AText) - 1;
     AMemo.SelLength := Length(AText);
     AMemo.SetFocus;
+  end
+  else if AStartPos = 0 then ShowMessage(Format('Can not find any search text. [%s]', [AText]))
+end;
+
+procedure TFrameMain.SelectWord(AMemo: TMemo);
+const
+  IgnoreChar = #9#10#13' !@#$%^&*()_+-=~`[]{}\|/.,:;<>"''';
+var
+  n, nl, ns: Integer;
+  done, is_delim: Boolean;
+  s: string;
+begin
+  s := AMemo.Text;
+  ns := Length(s);
+  if FSelStart >= ns then Exit;
+  n := FSelStart + 1;
+  is_delim := Pos(s[n], IgnoreChar) > 0;
+  nl := 0;
+  done := False;
+  while (n <= ns) and not done do
+  begin
+    done := Pos(s[n], IgnoreChar) > 0;
+    if is_delim then done := not done;
+    if not done then Inc(nl);
+    Inc(n);
   end;
+  n := FSelStart;
+  done := False;
+  while (n > 0) and not done do
+  begin
+    done := Pos(s[n], IgnoreChar) > 0;
+    if is_delim then done := not done;
+    if not done then
+    begin
+      Dec(FSelStart);
+      Inc(nl);
+    end;
+    Dec(n);
+  end;
+  AMemo.SelStart := FSelStart;
+  AMemo.SelLength := nl;
 end;
 
 constructor TFrameMain.Create(AOwner: TComponent);
