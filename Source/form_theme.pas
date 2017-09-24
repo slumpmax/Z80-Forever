@@ -622,6 +622,11 @@ begin
   FClickCount := 0;
   FRegionChanged := True;
   FLastState := wsNormal;
+
+  if Width > Screen.WorkAreaWidth - 16 then Width := Screen.WorkAreaWidth - 16;
+  if Height > Screen.WorkAreaHeight - 16 then Height := Screen.WorkAreaHeight - 16;
+  Left := (Screen.WorkAreaWidth - Width) div 2;
+  Top := (Screen.WorkAreaHeight - Height) div 2;
 end;
 
 procedure TThemeForm.FormDestroy(Sender: TObject);

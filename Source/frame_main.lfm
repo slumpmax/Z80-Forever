@@ -1,9 +1,9 @@
 object FrameMain: TFrameMain
   Left = 0
-  Height = 647
+  Height = 640
   Top = 0
   Width = 862
-  ClientHeight = 647
+  ClientHeight = 640
   ClientWidth = 862
   TabOrder = 0
   object EditFileName: TEdit
@@ -26,7 +26,7 @@ object FrameMain: TFrameMain
   end
   object PageMain: TPageControl
     Left = 8
-    Height = 604
+    Height = 597
     Top = 39
     Width = 698
     ActivePage = TabEdit
@@ -35,11 +35,11 @@ object FrameMain: TFrameMain
     TabOrder = 2
     object TabEdit: TTabSheet
       Caption = 'Edit'
-      ClientHeight = 576
+      ClientHeight = 569
       ClientWidth = 690
       object MemoEdit: TMemo
         Left = 53
-        Height = 576
+        Height = 569
         Top = 0
         Width = 637
         Align = alClient
@@ -58,7 +58,7 @@ object FrameMain: TFrameMain
       end
       object PaintBoxLine: TPaintBox
         Left = 0
-        Height = 576
+        Height = 569
         Top = 0
         Width = 53
         Align = alLeft
@@ -90,13 +90,13 @@ object FrameMain: TFrameMain
   end
   object Panel1: TPanel
     Left = 712
-    Height = 632
+    Height = 625
     Top = 7
     Width = 143
     Anchors = [akTop, akRight, akBottom]
     BevelInner = bvRaised
     BevelOuter = bvLowered
-    ClientHeight = 632
+    ClientHeight = 625
     ClientWidth = 143
     TabOrder = 3
     object ButtonSave: TButton
@@ -148,7 +148,7 @@ object FrameMain: TFrameMain
     object ButtonSearch: TButton
       Left = 8
       Height = 25
-      Top = 565
+      Top = 558
       Width = 127
       Action = ActionSearch
       Anchors = [akLeft, akRight, akBottom]
@@ -157,7 +157,7 @@ object FrameMain: TFrameMain
     object ButtonGoto: TButton
       Left = 8
       Height = 25
-      Top = 597
+      Top = 590
       Width = 127
       Action = ActionGoto
       Anchors = [akLeft, akRight, akBottom]

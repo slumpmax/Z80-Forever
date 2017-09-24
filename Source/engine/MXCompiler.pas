@@ -98,12 +98,35 @@ type
     function PopString: string;
   end;
 
+  { TSourceTextObject }
+
+  TSourceTextObject = class(TStringList)
+  private
+    FFileName: string;
+  public
+    procedure LoadFromFile(AFileName: string); override;
+    property FileName: string read FFileName write FFileName;
+  end;
+
+  { TSourceTextList }
+
+  TSourceTextList = class(TList)
+  private
+    function GetSources(AIndex: Integer): TStrings;
+  public
+    constructor Create;
+    procedure Clear; override;
+    function AddSource(AFileName: string): TSourceTextObject;
+    property Sources[AIndex: Integer]: TStrings read GetSources;
+  end;
+
   TMXCompiler = class
   private
     FMemory, FCodes: array of Byte;
     FExpStack: Variant;
     FOpcode, FLine, FCondition, FExpression, FOutputExt: string;
     FTexts, FOutput: TStrings;
+    FSources: TSourceTextList;
     FBuffers, FWarnings, FErrors: TStringList;
     FSymbols, FOpcodes1, FOpcodes2, FRegisterCode: TSymbolList;
     FErrorCount, FWarningCount, FLineCount, FPass, FOutputExtCount, FIndexReg, FPreIndex, FIndexOffset: Integer;
@@ -172,7 +195,7 @@ type
     function CompileCode9: Boolean;
     procedure DecompilePass(APass: Integer);
   public
-    UseHeader: Boolean;
+    HaveBinaryHeader: Boolean;
     constructor Create;
     destructor Destroy; override;
     procedure Compile(AFileName: string; AReport: TStrings); overload;
@@ -192,6 +215,39 @@ const
   DefaultAddress = $100;
 
 implementation
+
+{ TSourceTextList }
+
+function TSourceTextList.GetSources(AIndex: Integer): TStrings;
+begin
+  Result := TSourceTextObject(inherited Items[AIndex]);
+end;
+
+constructor TSourceTextList.Create;
+begin
+  inherited Create;
+end;
+
+procedure TSourceTextList.Clear;
+begin
+  inherited Clear;
+end;
+
+function TSourceTextList.AddSource(AFileName: string): TSourceTextObject;
+begin
+  Result := TSourceTextObject.Create;
+  Result.Assign(AStrings);
+  Result.FFileName := ExpandFileName(AFileName);
+  Add(Result);
+end;
+
+{ TSourceTextObject }
+
+procedure TSourceTextObject.LoadFromFile(AFileName: string);
+begin
+  inherited LoadFromFile(AFileName);
+  FFileName := ExpandFileName(AFileName);
+end;
 
 { TMXCompiler }
 
@@ -354,6 +410,8 @@ begin
   finally
     ss.Free;
   end;
+  FSources.Clear;
+  FSources.AddSource(AFileName);
 end;
 
 procedure TMXCompiler.Compile(ATexts, AReports: TStrings);
@@ -449,25 +507,24 @@ function TMXCompiler.CompileCode0: Boolean;
 var
   p: Integer;
 const
-  PragmaStr: string = ' OUTEXT '; // 00-07
+  PragmaStr: string = '001[#OUTEXT]002[INCLUDE]002[#INCLUDE]'; // 00-07
 begin
-  Result := False;
-  if Copy(FOpCode, 1, 1) = '#' then
-  begin
-    Delete(FOpCode, 1, 1);
-    p := Pos(' ' + FOpcode + ' ', PragmaStr);
-    Result := p > 0;
-    if Result then
-    case (p - 1) div 8 of
-      0:
-      begin
-        RequireSpace(FLine);
-        FOutputExt := FetchLabel(FLine);
-        AddCodeText(Format('#OUTEXT   %s', [FOutputExt]));
-        Inc(FOutputExtCount);
-        if FOutputExtCount > 1 then AddWarning(Format('Output extension define more than once. (%s)', [FOutputExt]));
-        AddText('');
-      end;
+  p := Pos('[' + FOpcode + ']', PragmaStr);
+  Result := p > 0;
+  if Result then
+  case StrToIntDef(Copy(PragmaStr, p - 3, 3), 0) of
+    0: // #OUTTEXT
+    begin
+      RequireSpace(FLine);
+      FOutputExt := FetchLabel(FLine);
+      AddCodeText(Format('%s   %s', [FOpCode, FOutputExt]));
+      Inc(FOutputExtCount);
+      if FOutputExtCount > 1 then AddWarning(Format('Output extension define more than once. (%s)', [FOutputExt]));
+      AddText('');
+    end;
+    1: // INCLUDE, #INCLUDE;
+    begin
+      RequireSpace(FLine);
     end;
   end;
 end;
@@ -1216,7 +1273,8 @@ begin
   FLineCount := 0;
   FLine := '';
   FPass := 1;
-  UseHeader := False;
+  HaveBinaryHeader := False;
+  FSources := TSourceTextList.Create;
   FSymbols := TSymbolList.Create;
   FBuffers := TStringList.Create;
   FWarnings := TStringList.Create;
@@ -1294,7 +1352,7 @@ var
   ext: string;
   buf: array[0..6] of Byte = (0, 0, 0, 0, 0, 0, 0);
 begin
-  UseHeader := False;
+  HaveBinaryHeader := False;
   FillChar(FMemory[0], 65536, 0);
   fs := TFileStream.Create(AFileName, fmOpenRead);
   try
@@ -1316,7 +1374,7 @@ begin
         FStartAddress := buf[1] or (buf[2] shl 8);
         FEndAddress := (buf[3] or (buf[4] shl 8));
         FRunAddress := buf[5] or (buf[6] shl 8);
-        UseHeader := True;
+        HaveBinaryHeader := True;
         n := 0;
       end
       else Move(buf[0], FMemory[FStartAddress], n);
@@ -1368,7 +1426,7 @@ begin
   FPreAddress := FStartAddress;
   idx := 0;
   AddDecodeConst;
-  if UseHeader then
+  if HaveBinaryHeader then
   begin
     AddDecodeText('#outext', 'bin', '');
     AddDecodeText('');
@@ -1520,6 +1578,7 @@ begin
   FSymbols.Free;
   FOpcodes1.Free;
   FOpcodes2.Free;
+  FSources.Free;
   FRegisterCode.Free;
   SetLength(FMemory, 0);
   SetLength(FCodes, 0);
