@@ -218,7 +218,9 @@ var
   fname: string;
 begin
   PageMain.TabIndex := 1;
-  Compiler.Compile(MemoEdit.Lines, MemoOutput.Lines);
+  Compiler.SourceTexts.Clear;
+  Compiler.SourceTexts.AddSource(EditFileName.Text, MemoEdit.Lines);
+  Compiler.Compile(EditFileName.Text, MemoOutput.Lines);
   MemoOutput.SelStart := Length(MemoOutput.Text);
   MemoOutput.SelLength := 0;
   MemoOutput.Perform(EM_LINESCROLL, 0, MemoOutput.Lines.Count - 1);

@@ -100,36 +100,55 @@ type
 
   { TSourceTextObject }
 
-  TSourceTextObject = class(TStringList)
+  TSourceTextObject = class
   private
+    FStrings: TStrings;
     FFileName: string;
+    FLineIndex: Integer;
+    FAllocated: Boolean;
+    function GetCount: Integer;
+    function GetLines(AIndex: Integer): string;
   public
-    procedure LoadFromFile(AFileName: string); override;
+    constructor Create;
+    procedure Assign(AFileName: string; AStrings: TStrings);
+    property Count: Integer read GetCount;
     property FileName: string read FFileName write FFileName;
+    property Lines[AIndex: Integer]: string read GetLines;
   end;
 
   { TSourceTextList }
 
   TSourceTextList = class(TList)
   private
-    function GetSources(AIndex: Integer): TStrings;
+    FSourceIndex: Integer;
+    function GetSourceFileName: string;
+    function GetSourceFiles(AFileName: string): TSourceTextObject;
+    function GetSourceLineIndex: Integer;
+    function GetSources(AIndex: Integer): TSourceTextObject;
+    function GetSourceStrings(AFileName: string): TStrings;
   public
     constructor Create;
     procedure Clear; override;
-    function AddSource(AFileName: string): TSourceTextObject;
-    property Sources[AIndex: Integer]: TStrings read GetSources;
+    function GetLine(var AText: string): Boolean;
+    function AddSource(AFileName: string; AStrings: TStrings = nil): TSourceTextObject;
+    property SourceFileName: string read GetSourceFileName;
+    property SourceLineIndex: Integer read GetSourceLineIndex;
+    property SourceIndex: Integer read FSourceIndex;
+    property Sources[AIndex: Integer]: TSourceTextObject read GetSources;
+    property SourceFiles[AFileName: string]: TSourceTextObject read GetSourceFiles;
+    property SourceStrings[AFileName: string]: TStrings read GetSourceStrings;
   end;
 
   TMXCompiler = class
   private
     FMemory, FCodes: array of Byte;
     FExpStack: Variant;
-    FOpcode, FLine, FCondition, FExpression, FOutputExt: string;
-    FTexts, FOutput: TStrings;
-    FSources: TSourceTextList;
+    FFileName, FOpcode, FLine, FCondition, FExpression, FOutputExt: string;
+    FCompileTexts, FSourceTexts: TSourceTextList;
+    FOutput: TStrings;
     FBuffers, FWarnings, FErrors: TStringList;
     FSymbols, FOpcodes1, FOpcodes2, FRegisterCode: TSymbolList;
-    FErrorCount, FWarningCount, FLineCount, FPass, FOutputExtCount, FIndexReg, FPreIndex, FIndexOffset: Integer;
+    FErrorCount, FWarningCount, FPass, FOutputExtCount, FIndexReg, FPreIndex, FIndexOffset: Integer;
     FAddress, FPreAddress, FStartAddress, FEndAddress, FRunAddress: Integer;
     FHaveCode, FRunning, FLabeled: Boolean;
     function FetchOpcode(var AText: string): string;
@@ -198,8 +217,7 @@ type
     HaveBinaryHeader: Boolean;
     constructor Create;
     destructor Destroy; override;
-    procedure Compile(AFileName: string; AReport: TStrings); overload;
-    procedure Compile(ATexts, AReports: TStrings); overload;
+    procedure Compile(AFileName: string; AReports: TStrings); overload;
     procedure Decompile(AFileName: string; AOutput: TStrings); overload;
     procedure Decompile(AOutput: TStrings; AStartAddress, AEndAddress, ARunAddress: Integer); overload;
     procedure Decompile(AOutput: TStrings); overload;
@@ -208,6 +226,7 @@ type
     property ErrorCount: Integer read FErrorCount;
     property OutputExt: string read FOutputExt write FOutputExt;
     property StartAddress: Integer read FStartAddress;
+    property SourceTexts: TSourceTextList read FSourceTexts;
     property WarningCount: Integer read FWarningCount;
   end;
 
@@ -218,35 +237,125 @@ implementation
 
 { TSourceTextList }
 
-function TSourceTextList.GetSources(AIndex: Integer): TStrings;
+function TSourceTextList.GetSources(AIndex: Integer): TSourceTextObject;
 begin
   Result := TSourceTextObject(inherited Items[AIndex]);
+end;
+
+function TSourceTextList.GetSourceStrings(AFileName: string): TStrings;
+var
+  st: TSourceTextObject;
+begin
+  st := SourceFiles[AFileName];
+  if st <> nil then
+    Result := st.FStrings
+  else Result := nil;
+end;
+
+function TSourceTextList.GetSourceFiles(AFileName: string): TSourceTextObject;
+var
+  n: Integer;
+begin
+  AFileName := ExpandFileName(AFileName);
+  Result := nil;
+  n := Count;
+  while (n > 0) and (Result = nil) do
+  begin
+    Dec(n);
+    if SameText(Sources[n].FFileName, AFileName) then Result := Sources[n];
+  end;
+end;
+
+function TSourceTextList.GetSourceFileName: string;
+begin
+  Result := ExtractFileName(Sources[FSourceIndex].FileName);
+end;
+
+function TSourceTextList.GetSourceLineIndex: Integer;
+begin
+  Result := Sources[FSourceIndex].FLineIndex;
 end;
 
 constructor TSourceTextList.Create;
 begin
   inherited Create;
+  FSourceIndex := -1;
 end;
 
 procedure TSourceTextList.Clear;
 begin
   inherited Clear;
+  FSourceIndex := -1;
 end;
 
-function TSourceTextList.AddSource(AFileName: string): TSourceTextObject;
+function TSourceTextList.GetLine(var AText: string): Boolean;
+var
+  st: TSourceTextObject;
+begin
+  Result := FSourceIndex >= 0;
+  if Result then
+  begin
+    st := Sources[FSourceIndex];
+    Result := st.FLineIndex < st.Count;
+    if Result then
+    begin
+      AText := st.Lines[st.FLineIndex];
+      Inc(st.FLineIndex);
+      if st.FLineIndex >= st.Count then
+      begin
+        Delete(FSourceIndex);
+        Dec(FSourceIndex);
+      end;
+    end;
+  end;
+end;
+
+function TSourceTextList.AddSource(AFileName: string; AStrings: TStrings): TSourceTextObject;
 begin
   Result := TSourceTextObject.Create;
-  Result.Assign(AStrings);
-  Result.FFileName := ExpandFileName(AFileName);
-  Add(Result);
+  Result.Assign(AFileName, AStrings);
+  FSourceIndex := Add(Result);
 end;
 
 { TSourceTextObject }
 
-procedure TSourceTextObject.LoadFromFile(AFileName: string);
+function TSourceTextObject.GetLines(AIndex: Integer): string;
 begin
-  inherited LoadFromFile(AFileName);
-  FFileName := ExpandFileName(AFileName);
+  Result := FStrings[AIndex];
+end;
+
+function TSourceTextObject.GetCount: Integer;
+begin
+  if FStrings <> nil then
+    Result := FStrings.Count
+  else Result := 0;
+end;
+
+constructor TSourceTextObject.Create;
+begin
+  inherited Create;
+  FStrings := nil;
+  FFileName := '';
+  FLineIndex := 0;
+  FAllocated := False;
+end;
+
+procedure TSourceTextObject.Assign(AFileName: string; AStrings: TStrings);
+begin
+  if AStrings = nil then
+  begin
+    if not FAllocated then AStrings := TStringList.Create;
+    AStrings.LoadFromFile(AFileName);
+    FAllocated := True;
+  end
+  else
+  begin
+    if FAllocated then FreeAndNil(FStrings);
+    FAllocated := False;
+  end;
+  FStrings := AStrings;
+  FFileName:= ExpandFileName(AFileName);
+  FLineIndex := 0;
 end;
 
 { TMXCompiler }
@@ -371,8 +480,8 @@ procedure TMXCompiler.AddError(AErrorText: string);
 begin
   if FPass = 1 then Exit;
   if FOpcode <> '' then AErrorText := '[' + FOpcode + '] ' + AErrorText;
-  AddReport(Format('Error in line %d: %s', [FLineCount, AErrorText]));
-  FErrors.Add(Format('[%4.4X] Error in line %d: %s', [FAddress, FLineCount, AErrorText]));
+  AddReport(Format('Error in file "%s" line %d: %s', [FCompileTexts.SourceFileName, FCompileTexts.SourceLineIndex, AErrorText]));
+  FErrors.Add(Format('[ADDR:%4.4X] Error in file "%s" line %d: %s', [FAddress, FCompileTexts.SourceFileName, FCompileTexts.SourceLineIndex, AErrorText]));
   Inc(FErrorCount);
 //  FOpcode := '';
 end;
@@ -394,27 +503,12 @@ procedure TMXCompiler.AddWarning(AWarningText: string);
 begin
   if FPass = 1 then Exit;
   if FOpcode <> '' then AWarningText := '[' + FOpcode + '] ' + AWarningText;
-  AddReport(Format('Warning in line %d: %s', [FLineCount, AWarningText]));
-  FWarnings.Add(Format('[%4.4X] Warning in line %d: %s', [FAddress, FLineCount, AWarningText]));
+  AddReport(Format('Warning in file "%s" line %d: %s', [FCompileTexts.SourceFileName, FCompileTexts.SourceLineIndex, AWarningText]));
+  FWarnings.Add(Format('[ADDR:%4.4X] Warning in file "%s" line %d: %s', [FAddress, FCompileTexts.SourceFileName, FCompileTexts.SourceLineIndex, AWarningText]));
   Inc(FWarningCount);
 end;
 
-procedure TMXCompiler.Compile(AFileName: string; AReport: TStrings);
-var
-  ss: TStringList;
-begin
-  ss := TStringList.Create;
-  try
-    ss.LoadFromFile(AFileName);
-    Compile(ss, AReport);
-  finally
-    ss.Free;
-  end;
-  FSources.Clear;
-  FSources.AddSource(AFileName);
-end;
-
-procedure TMXCompiler.Compile(ATexts, AReports: TStrings);
+procedure TMXCompiler.Compile(AFileName: string; AReports: TStrings);
 var
   n: Integer;
 begin
@@ -423,11 +517,11 @@ begin
   FSymbols.Clear;
   FErrors.Clear;
   FWarnings.Clear;
-  FTexts := ATexts;
   FOutput := AReports;
   FErrorCount := 0;
   FWarningCount := 0;
   FillChar(FMemory[0], 65536, 0);
+  FFileName := AFileName;
   CompilePass(1);
   CompilePass(2);
   AddReport('');
@@ -525,6 +619,9 @@ begin
     1: // INCLUDE, #INCLUDE;
     begin
       RequireSpace(FLine);
+      FLine := Trim(FLine);
+      FCompileTexts.AddSource(FLine, FSourceTexts.SourceStrings[FFileName]);
+      AddCodeText(Format('%s   %s', [FOpCode, FLine]));
     end;
   end;
 end;
@@ -1237,13 +1334,12 @@ begin
   FStartAddress := DefaultAddress;
   FHaveCode := False;
   FRunning := True;
-  FLineCount := 0;
   FOutputExtCount := 0;
   FWarnings.Clear;
-  while (FLineCount < FTexts.Count) and FRunning do
+  FCompileTexts.Clear;
+  FCompileTexts.AddSource(FFileName, FSourceTexts.SourceStrings[FFileName]);
+  while FCompileTexts.GetLine(FLine) and FRunning do
   begin
-    FLine := FTexts[FLineCount];
-    Inc(FLineCount);
     FLabeled := False;
     FOpcode := FetchOpcode(FLine);
     SetLength(FCodes, 0);
@@ -1270,11 +1366,11 @@ begin
   FHaveCode := False;
   FErrorCount := 0;
   FWarningCount := 0;
-  FLineCount := 0;
   FLine := '';
   FPass := 1;
   HaveBinaryHeader := False;
-  FSources := TSourceTextList.Create;
+  FSourceTexts := TSourceTextList.Create;
+  FCompileTexts := TSourceTextList.Create;
   FSymbols := TSymbolList.Create;
   FBuffers := TStringList.Create;
   FWarnings := TStringList.Create;
@@ -1578,7 +1674,8 @@ begin
   FSymbols.Free;
   FOpcodes1.Free;
   FOpcodes2.Free;
-  FSources.Free;
+  FSourceTexts.Free;
+  FCompileTexts.Free;
   FRegisterCode.Free;
   SetLength(FMemory, 0);
   SetLength(FCodes, 0);
