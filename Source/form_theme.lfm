@@ -19,7 +19,6 @@ object ThemeForm: TThemeForm
   OnPaint = FormPaint
   OnResize = FormResize
   OnShow = FormShow
-  LCLVersion = '1.6.4.0'
   Visible = False
   object AppProps: TApplicationProperties
     OnRestore = AppPropsRestore

@@ -110,6 +110,7 @@ type
     function GetLines(AIndex: Integer): string;
   public
     constructor Create;
+    destructor Destroy; override;
     procedure Assign(AFileName: string; AStrings: TStrings);
     property Count: Integer read GetCount;
     property FileName: string read FFileName write FFileName;
@@ -206,12 +207,12 @@ type
     procedure AddWarning(AWarningText: string);
     procedure AddReport(AText: string);
     procedure FlushBuffers(AForced: Boolean = False);
-    procedure CompilePass(APass: Integer);
     function CompileCode0: Boolean;
     function CompileCode1: Boolean;
     function CompileCode2: Boolean;
     function CompileCode3: Boolean;
     function CompileCode9: Boolean;
+    procedure CompilePass(APass: Integer);
     procedure DecompilePass(APass: Integer);
   public
     HaveBinaryHeader: Boolean;
@@ -256,7 +257,6 @@ function TSourceTextList.GetSourceFiles(AFileName: string): TSourceTextObject;
 var
   n: Integer;
 begin
-  AFileName := ExpandFileName(AFileName);
   Result := nil;
   n := Count;
   while (n > 0) and (Result = nil) do
@@ -292,21 +292,21 @@ function TSourceTextList.GetLine(var AText: string): Boolean;
 var
   st: TSourceTextObject;
 begin
-  Result := FSourceIndex >= 0;
-  if Result then
+  Result := False;
+  while (FSourceIndex >= 0) and not Result do
   begin
     st := Sources[FSourceIndex];
     Result := st.FLineIndex < st.Count;
-    if Result then
+    if not Result then
     begin
-      AText := st.Lines[st.FLineIndex];
-      Inc(st.FLineIndex);
-      if st.FLineIndex >= st.Count then
-      begin
-        Delete(FSourceIndex);
-        Dec(FSourceIndex);
-      end;
+      Delete(FSourceIndex);
+      Dec(FSourceIndex);
     end;
+  end;
+  if Result then
+  begin
+    AText := st.Lines[st.FLineIndex];
+    Inc(st.FLineIndex);
   end;
 end;
 
@@ -340,6 +340,16 @@ begin
   FAllocated := False;
 end;
 
+destructor TSourceTextObject.Destroy;
+begin
+  if FAllocated then
+  begin
+    FreeAndNil(FStrings);
+    FAllocated := False;
+  end;
+  inherited Destroy;
+end;
+
 procedure TSourceTextObject.Assign(AFileName: string; AStrings: TStrings);
 begin
   if AStrings = nil then
@@ -354,7 +364,7 @@ begin
     FAllocated := False;
   end;
   FStrings := AStrings;
-  FFileName:= ExpandFileName(AFileName);
+  FFileName:= AFileName;
   FLineIndex := 0;
 end;
 
@@ -607,7 +617,7 @@ begin
   Result := p > 0;
   if Result then
   case StrToIntDef(Copy(PragmaStr, p - 3, 3), 0) of
-    0: // #OUTTEXT
+    1: // #OUTTEXT
     begin
       RequireSpace(FLine);
       FOutputExt := FetchLabel(FLine);
@@ -616,12 +626,12 @@ begin
       if FOutputExtCount > 1 then AddWarning(Format('Output extension define more than once. (%s)', [FOutputExt]));
       AddText('');
     end;
-    1: // INCLUDE, #INCLUDE;
+    2: // INCLUDE, #INCLUDE;
     begin
       RequireSpace(FLine);
-      FLine := Trim(FLine);
-      FCompileTexts.AddSource(FLine, FSourceTexts.SourceStrings[FFileName]);
       AddCodeText(Format('%s   %s', [FOpCode, FLine]));
+      FLine := ExtractFilePath(FFileName) + Trim(FLine);
+      FCompileTexts.AddSource(FLine, FSourceTexts.SourceStrings[FLine]);
     end;
   end;
 end;
@@ -1863,10 +1873,19 @@ begin
 end;
 
 function OpGreaterEqual(a, b: Char): Boolean;
+const
+  Predator = '10[*]10[/]06[+]06[-]03[&]03[|]';
+var
+  n1, n2: Integer;
 begin
-  if (a = '*') or (a = '/') then
-    Result := (b = '*') or (b = '/')
-  else Result := (b = '+') or (b = '-');
+  n1 := Pos('[' + a + ']', Predator) - 2;
+  if n1 > 0 then n1 := StrToIntDef(Copy(Predator, n1, 2), 0);
+  n2 := Pos('[' + b + ']', Predator) - 2;
+  if n2 > 0 then n2 := StrToIntDef(Copy(Predator, n2, 2), 0);
+  Result := a >= b;
+  //if (a = '*') or (a = '/') then
+  //  Result := (b = '*') or (b = '/')
+  //else Result := (b = '+') or (b = '-');
 end;
 
 procedure TMXCompiler.FetchPostfixExp(var AText: string; AList: TStrings);
@@ -1876,6 +1895,7 @@ var
   s: string;
   v: Variant;
   c: Char;
+  sym: TSymbolObject;
 begin
   done := False;
   opstack := '';
@@ -1885,7 +1905,7 @@ begin
   while (AText <> '') and not done do
   begin
     c := AText[1];
-    if ((c = '+') or (c = '-') or (c = '*') or (c = '/')) then
+    if ((c = '+') or (c = '-') or (c = '*') or (c = '/') or (c = '|') or (c = '&')) then
     begin
       s := Copy(opstack, 1, 1);
       while (s <> '') and (s <> '(') do
@@ -1933,7 +1953,8 @@ begin
           if FPass = 2 then
           begin
             v := FSymbols.Value[s];
-            FSymbols[s].FUsed := True;
+            sym := FSymbols[s];
+            if sym <> nil then sym.FUsed := True;
             if VarIsNull(v) then
             begin
               s := '';
@@ -2281,7 +2302,7 @@ end;
 
 function TMXCompiler.PostfixToInt64(AList: TStrings): Variant;
 const
-  opers = '+-*/';
+  opers = '+-*/&|';
 var
   pl: TPostfixList;
   n: Integer;
@@ -2314,6 +2335,8 @@ begin
           2: a := a - b;
           3: a := a * b;
           4: if b <> 0 then a := a div b;
+          5: a := a and b;
+          6: a := a or b;
         else
           AddError('Bad operator: ' + s);
         end;

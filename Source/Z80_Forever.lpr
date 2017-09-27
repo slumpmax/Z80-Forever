@@ -9,7 +9,7 @@ uses
   cthreads,
   {$ENDIF}{$ENDIF}
   Interfaces, // this includes the LCL widgetset
-  Forms, form_theme, frame_main
+  Forms, form_theme, frame_main, frame_edit, main_routine
   { you can add units after this };
 
 {$R *.res}

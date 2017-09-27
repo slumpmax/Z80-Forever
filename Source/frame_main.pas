@@ -5,24 +5,17 @@ interface
 uses
   MXCompiler, Classes, SysUtils, FileUtil, Forms, Controls, StdCtrls, ComCtrls,
   Dialogs, LCLType, ActnList, ExtCtrls, Graphics, LMessages,
-  Windows;
+  Windows, frame_edit;
 
 const
   LM_PAINTLINE = LM_USER;
 
 type
 
-  { TMemo }
-
-  TMemo  = class(StdCtrls.TMemo)
-  private
-   procedure CNCommand(var Message: TLMCommand); message CN_COMMAND;
-   procedure LMVScroll(var Msg: TLMHScroll); message LM_VSCROLL;
-  end;
-
   { TFrameMain }
 
   TFrameMain = class(TFrame)
+    ActionClose: TAction;
     ActionDeleteLine: TAction;
     ActionSelectAll: TAction;
     ActionGoto: TAction;
@@ -36,6 +29,7 @@ type
     ActionMain: TActionList;
     ButtonAssemble: TButton;
     ButtonBrowse: TButton;
+    ButtonClose: TButton;
     ButtonSave: TButton;
     ButtonSaveAs: TButton;
     ButtonNew: TButton;
@@ -45,16 +39,16 @@ type
     DialogOpenSource: TOpenDialog;
     DialogAssemble: TSaveDialog;
     EditFileName: TEdit;
-    MemoEdit: TMemo;
+    ImageListPage: TImageList;
     MemoOutput: TMemo;
     PageMain: TPageControl;
-    PaintBoxLine: TPaintBox;
     Panel1: TPanel;
     DialogSave: TSaveDialog;
-    TabEdit: TTabSheet;
     TabOutput: TTabSheet;
+    TabSheet1: TTabSheet;
     procedure ActionAssembleExecute(Sender: TObject);
     procedure ActionBrowseExecute(Sender: TObject);
+    procedure ActionCloseExecute(Sender: TObject);
     procedure ActionDeleteLineExecute(Sender: TObject);
     procedure ActionGotoExecute(Sender: TObject);
     procedure ActionNewExecute(Sender: TObject);
@@ -63,22 +57,14 @@ type
     procedure ActionSearchExecute(Sender: TObject);
     procedure ActionSearchNextExecute(Sender: TObject);
     procedure ActionSelectAllExecute(Sender: TObject);
-    procedure MemoEditChange(Sender: TObject);
-    procedure MemoEditDblClick(Sender: TObject);
-    procedure MemoEditKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState
-      );
-    procedure MemoEditMouseDown(Sender: TObject; Button: TMouseButton;
-     Shift: TShiftState; X, Y: Integer);
-    procedure MemoOutputClick(Sender: TObject);
-    procedure PaintBoxLinePaint(Sender: TObject);
+    procedure PageMainChange(Sender: TObject);
   private
     Compiler: TMXCompiler;
-    FChanged: Boolean;
-    FSearchText: string;
-    FSelStart: Integer;
-    procedure LMPaintLine(var msg: TMsg); message LM_PAINTLINE;
-    procedure SearchText(AMemo: TMemo; AText: string; AStartPos: Integer = 0);
-    procedure SelectWord(AMemo: TMemo);
+    FEditFrames: TFrameEditList;
+    FSearchText, FCompileFile: string;
+    FNewNumber: Integer;
+    procedure UpdateButton;
+    procedure EditFrameChanged(Sender: TObject);
     { private declarations }
   public
     constructor Create(AOwner: TComponent); override;
@@ -92,399 +78,375 @@ implementation
 
 {$R *.lfm}
 
-{ TMemo }
-
-procedure TMemo.CNCommand(var Message: TLMCommand);
-var
-  con: TWinControl;
-begin
-  case Message.NotifyCode of
-    EN_VSCROLL:
-    begin
-      con := Parent;
-      while not (con is TFrame) and (con <> nil) do
-      begin
-        con := con.Parent;
-      end;
-      if con <> nil then con.Perform(LM_PAINTLINE, 0, 0);
-    end;
-  end;
-  inherited;
-end;
-
-procedure TMemo.LMVScroll(var Msg: TLMHScroll);
-var
-  con: TWinControl;
-begin
-  begin
-    con := Parent;
-    while not (con is TFrame) and (con <> nil) do
-    begin
-      con := con.Parent;
-    end;
-    if con <> nil then con.Perform(LM_PAINTLINE, 0, 0);
-  end;
-  inherited;
-end;
+uses
+  main_routine;
 
 { TFrameMain }
 
 procedure TFrameMain.ActionSaveExecute(Sender: TObject);
 var
+  frm: TFrameEdit;
   ext: string;
 begin
-  ext := UpperCase(ExtractFileExt(EditFileName.Text));
-  if (EditFileName.Text = '') or (ext <> '.ASM') then
-    ButtonSaveAs.Click
-  else
-  begin
-    MemoEdit.Lines.SaveToFile(EditFileName.Text);
-    ButtonSave.Enabled := False;
-    FChanged := False;
-  end;
+  frm := FEditFrames[PageMain.PageIndex - 1];
+  ext := UpperCase(ExtractFileExt(frm.FileName));
+  if (Copy(frm.FileName, 1, 1) = '<') or (ext <> '.ASM') then
+    ActionSaveAs.Execute
+  else frm.SaveToFile(frm.FileName);
 end;
 
 procedure TFrameMain.ActionSearchExecute(Sender: TObject);
 var
+  frm: TFrameEdit;
   memo: TMemo;
 begin
   if InputQuery('Find text', 'Search text:', FSearchText) then
   begin
     if PageMain.TabIndex = 0 then
-      memo := MemoEdit
-    else memo := MemoOutput;
+      memo := MemoOutput
+    else
+    begin
+      frm := FEditFrames[PageMain.TabIndex - 1];
+      memo := frm.MemoEdit;
+    end;
     SearchText(memo, FSearchText, memo.SelStart)
   end;
 end;
 
 procedure TFrameMain.ActionSearchNextExecute(Sender: TObject);
 var
+  frm: TFrameEdit;
   memo: TMemo;
 begin
   if FSearchText <> '' then
   begin
     if PageMain.TabIndex = 0 then
-      memo := MemoEdit
-    else memo := MemoOutput;
+      memo := MemoOutput
+    else
+    begin
+      frm := FEditFrames[PageMain.TabIndex - 1];
+      memo := frm.MemoEdit;
+    end;
     SearchText(memo, FSearchText, memo.SelStart + memo.SelLength);
   end
 end;
 
 procedure TFrameMain.ActionSelectAllExecute(Sender: TObject);
+var
+  frm: TFrameEdit;
 begin
   if PageMain.TabIndex = 0 then
   begin
-    if MemoEdit.Focused then MemoEdit.SelectAll;
+    if MemoOutput.Focused then MemoOutput.SelectAll;
   end
-  else if MemoOutput.Focused then MemoOutput.SelectAll;
+  else
+  begin
+    frm := FEditFrames[PageMain.TabIndex - 1];
+    if frm.MemoEdit.Focused then frm.MemoEdit.SelectAll;
+  end;
 end;
 
 procedure TFrameMain.ActionSaveAsExecute(Sender: TObject);
+var
+  frm: TFrameEdit;
 begin
-  if EditFileName.Text = '' then
+  frm := FEditFrames[PageMain.PageIndex - 1];
+  if frm.FileName = '' then
     DialogSave.FileName := ''
-  else DialogSave.FileName := ChangeFileExt(EditFileName.Text, '.asm');
-  if DialogSave.Execute then
-  begin
-    MemoEdit.Lines.SaveToFile(DialogSave.FileName);
-    EditFileName.Text := DialogSave.FileName;
-    ButtonSave.Enabled := False;
-    FChanged := False;
-  end;
+  else DialogSave.FileName := ChangeFileExt(frm.FileName, '.asm');
+  if DialogSave.Execute then frm.SaveToFile(DialogSave.FileName);
 end;
 
 procedure TFrameMain.ActionNewExecute(Sender: TObject);
 begin
-  if FChanged then
-  begin
-    case MessageDlg('Do you want to save changed previous document?', mtWarning, [mbYes, mbNo, mbCancel], 0, mbCancel) of
-      mrYes: ButtonSave.Click;
-      mrNo: FChanged := False;
-    end;
-  end;
-  if not FChanged then
-  begin
-    PageMain.TabIndex := 0;
-    MemoEdit.Clear;
-    EditFileName.Text := '';
-    FChanged := False;
-    MemoEdit.SetFocus;
-    PaintBoxLine.Invalidate;
-  end;
+  PageMain.PageIndex := PageMain.PageCount - 1;
+  PageMainChange(PageMain);
 end;
 
 procedure TFrameMain.ActionAssembleExecute(Sender: TObject);
 var
+  frm: TFrameEdit;
   fname: string;
+  n: Integer;
 begin
-  PageMain.TabIndex := 1;
+  frm := FEditFrames[PageMain.PageIndex - 1];
   Compiler.SourceTexts.Clear;
-  Compiler.SourceTexts.AddSource(EditFileName.Text, MemoEdit.Lines);
-  Compiler.Compile(EditFileName.Text, MemoOutput.Lines);
+  for n := 0 to FEditFrames.Count - 1 do
+  begin
+    Compiler.SourceTexts.AddSource(FEditFrames[n].FileName, FEditFrames[n].MemoEdit.Lines);
+  end;
+  Compiler.Compile(frm.FileName, MemoOutput.Lines);
+  FCompileFile := frm.FileName;
+  PageMain.PageIndex := 0;
+  PageMainChange(PageMain);
   MemoOutput.SelStart := Length(MemoOutput.Text);
   MemoOutput.SelLength := 0;
-  MemoOutput.Perform(EM_LINESCROLL, 0, MemoOutput.Lines.Count - 1);
   if Compiler.Address - Compiler.StartAddress = 0 then Exit;
-  fname := ChangeFileExt(EditFileName.Text, '.' + Compiler.OutputExt);
-  if (not CheckOverwrite.Checked and FileExists(fname)) or (EditFileName.Text = '') then
+  fname := ChangeFileExt(frm.FileName, '.' + Compiler.OutputExt);
+  if (not frm.Overwrited and FileExists(fname)) or (frm.FileName = '') then
   begin
     DialogAssemble.FileName := fname;
     DialogAssemble.Filter := Format('Output files (*.%s)|*.%s', [Compiler.OutputExt, Compiler.OutputExt]);
     if DialogAssemble.Execute then
     begin
       Compiler.SaveToFile(DialogAssemble.FileName, Compiler.StartAddress, Compiler.Address - 1);
-      CheckOverwrite.Checked := True;
+      frm.Overwrited := True;
     end;
   end
   else
   begin
     Compiler.SaveToFile(fname, Compiler.StartAddress, Compiler.Address - 1);
-    CheckOverwrite.Checked := True;
+    frm.Overwrited := True;
   end;
 end;
 
 procedure TFrameMain.ActionBrowseExecute(Sender: TObject);
 var
-  ext: string;
+  frm: TFrameEdit;
+  s, ext: string;
+  n: Integer;
+  do_new: Boolean;
 begin
   if DialogOpenSource.Execute then
   begin
-    if FChanged then
+    n := FEditFrames.IndexOf(DialogOpenSource.FileName);
+    if n >= 0 then
+      PageMain.PageIndex := n + 1
+    else
     begin
-      case MessageDlg('Do you want to save changed previous document?', mtWarning, [mbYes, mbNo, mbCancel], 0, mbCancel) of
-        mrYes: ButtonSave.Click;
-        mrNo: FChanged := False;
+      do_new := True;
+      if PageMain.PageIndex > 0 then
+      begin
+        frm := FEditFrames[PageMain.PageIndex - 1];
+        if (Copy(frm.FileName, 1, 1) = '<') and not frm.Changed then do_new := False;
+      end;
+      if do_new then PageMain.PageIndex := PageMain.PageCount - 1;
+    end;
+    PageMainChange(PageMain);
+    frm := FEditFrames[PageMain.PageIndex - 1];
+    if frm.Changed then
+    begin
+      s := '"' + ExtractFileName(frm.FileName) + '"';
+      case MessageDlg(s + ' has changed. Do you want to save changed?', mtWarning, [mbYes, mbNo, mbCancel], 0, mbCancel) of
+        mrYes: ActionSave.Execute;
+        mrNo: frm.Changed := False;
       end;
     end;
-    if not FChanged then
+    if not frm.Changed then
     begin
-      EditFileName.Text := DialogOpenSource.FileName;
-      ext := UpperCase(ExtractFileExt(EditFileName.Text));
+      frm.FileName := DialogOpenSource.FileName;
+      ext := UpperCase(ExtractFileExt(frm.FileName));
       if ext = '.ASM' then
       begin
-        MemoEdit.Lines.LoadFromFile(EditFileName.Text);
-        ButtonSave.Enabled := False;
+        frm.LoadFromFile;
+        PageMain.ActivePage.ImageIndex := 1;
       end
       else
       begin
-        Compiler.Decompile(EditFileName.Text, MemoEdit.Lines);
-        CheckOverwrite.Checked := False;
-        ButtonSave.Enabled := True;
+        Compiler.Decompile(frm.FileName, frm.MemoEdit.Lines);
+        frm.Overwrited := False;
+        ActionSave.Enabled := True;
+        frm.Changed := False;
+        if ext = '.COM' then
+          PageMain.ActivePage.ImageIndex := 3
+        else PageMain.ActivePage.ImageIndex := 2;
       end;
-      PageMain.TabIndex := 0;
-      FChanged := False;
-      MemoEdit.SetFocus;
-      PaintBoxLine.Invalidate;
+      PageMain.ActivePage.Caption := ExtractFileName(frm.FileName);
+      frm.MemoEdit.SetFocus;
+      frm.PaintBoxLine.Invalidate;
     end;
   end;
 end;
 
-procedure TFrameMain.ActionDeleteLineExecute(Sender: TObject);
+procedure TFrameMain.ActionCloseExecute(Sender: TObject);
+var
+  frm: TFrameEdit;
+  n: Integer;
+  s: string;
 begin
-  if MemoEdit.Focused then MemoEdit.Lines.Delete(MemoEdit.CaretPos.y);
+  n := PageMain.PageIndex - 1;
+  frm := FEditFrames[n];
+  if frm.Changed then
+  begin
+    s := '"' + ExtractFileName(frm.FileName) + '"';
+    case MessageDlg(s + ' has changed. Do you want to save changed?', mtWarning, [mbYes, mbNo, mbCancel], 0, mbCancel) of
+      mrYes: ActionSave.Execute;
+      mrNo: frm.Changed := False;
+    end;
+  end;
+  if not frm.Changed then
+  begin
+    FEditFrames.Delete(n);
+    PageMain.Pages[n + 1].Free;
+    if n + 1 = PageMain.PageCount - 1 then PageMain.PageIndex := n;
+    PageMainChange(PageMain);
+  end;
+end;
+
+procedure TFrameMain.ActionDeleteLineExecute(Sender: TObject);
+var
+  frm: TFrameEdit;
+begin
+  frm := FEditFrames[PageMain.PageIndex - 1];
+  if frm.MemoEdit.Focused then frm.MemoEdit.Lines.Delete(frm.MemoEdit.CaretPos.y);
 end;
 
 procedure TFrameMain.ActionGotoExecute(Sender: TObject);
 var
+  frm: TFrameEdit;
   r, nr, n: Integer;
   s: string;
 begin
   if InputQuery('Goto Line Number', 'Enter line number:', s) then
   begin
-    PageMain.TabIndex := 0;
-    r := StrToIntDef(s, MemoEdit.CaretPos.Y + 1);
+    if PageMain.TabIndex = 0 then
+    begin
+      PageMain.PageIndex := FEditFrames.IndexOf(FCompileFile) + 1;
+      PageMainChange(PageMain);
+    end;
+    frm := FEditFrames[PageMain.PageIndex - 1];
+    r := StrToIntDef(s, frm.MemoEdit.CaretPos.Y + 1);
     if r < 1 then
       r := 1
-    else if r > MemoEdit.Lines.Count then r := MemoEdit.Lines.Count;
+    else if r > frm.MemoEdit.Lines.Count then r := frm.MemoEdit.Lines.Count;
     n := 0;
     nr := 0;
     Dec(r);
     while nr < r do
     begin
-      Inc(n, Length(MemoEdit.Lines[nr]) + 2);
+      Inc(n, Length(frm.MemoEdit.Lines[nr]) + 2);
       Inc(nr);
     end;
-    MemoEdit.SelStart := n;
-    MemoEdit.SelLength := Length(MemoEdit.Lines[r]);
-    MemoEdit.SetFocus;
-    PaintBoxLine.Invalidate;
+    frm.MemoEdit.SelStart := n;
+    frm.MemoEdit.SelLength := Length(frm.MemoEdit.Lines[r]);
+    frm.MemoEdit.SetFocus;
+    frm.PaintBoxLine.Invalidate;
   end;
 end;
 
-procedure TFrameMain.MemoEditChange(Sender: TObject);
-begin
-  FChanged := True;
-  ButtonSave.Enabled := True;
-end;
-
-procedure TFrameMain.MemoEditDblClick(Sender: TObject);
-begin
-  SelectWord(TMemo(Sender));
-end;
-
-procedure TFrameMain.MemoEditKeyDown(Sender: TObject; var Key: Word;
-  Shift: TShiftState);
-begin
-  case Key of
-    VK_SHIFT, VK_CONTROL, VK_MENU:;
-  else
-    PaintBoxLine.Invalidate;
-  end;
-end;
-
-procedure TFrameMain.MemoEditMouseDown(Sender: TObject; Button: TMouseButton;
- Shift: TShiftState; X, Y: Integer);
-begin
-  PaintBoxLine.Invalidate;
-end;
-
-procedure TFrameMain.MemoOutputClick(Sender: TObject);
-begin
-  FSelStart := TMemo(Sender).SelStart;
-end;
-
-procedure TFrameMain.PaintBoxLinePaint(Sender: TObject);
+procedure TFrameMain.PageMainChange(Sender: TObject);
 var
-  ScrollInfo: TScrollInfo;
-  n, m, y, h: Integer;
+  frm: TFrameEdit;
+  n: Integer;
 begin
-  with TPaintBox(Sender).Canvas do
+  if PageMain.ActivePage.Caption = '+' then
   begin
-    Brush.Color := clSilver;
-    FillRect(ClipRect);
-    Font.Assign(MemoEdit.Font);
-    h := TextHeight('A');
-    with ScrollInfo do
+    frm := FEditFrames.AddFrame;
+    frm.Align := alClient;
+    frm.Parent := PageMain.ActivePage;
+    frm.OnChanged := EditFrameChanged;
+    frm.MemoEdit.SetFocus;
+    frm.FileName := Format('<new_%d>', [FNewNumber]);
+    Inc(FNewNumber);
+    PageMain.ActivePage.Caption := frm.FileName;
+    n := PageMain.PageIndex;
+    with PageMain.AddTabSheet do
     begin
-      cbSize := SizeOf(Self);
-      fMask := SIF_POS or SIF_RANGE or SIF_TRACKPOS;
+      PageIndex := n + 1;
+      Caption := '+';
     end;
-    GetScrollInfo(MemoEdit.Handle, SB_VERT, ScrollInfo);
-    n := ScrollInfo.nPos + 1;
-    Brush.Color := clGray;
-    FillRect(Bounds(0, 4 + (MemoEdit.CaretPos.Y - n + 1) * h, PaintBoxLine.Width, h));
-    y := 0;
-    Brush.Style := bsClear;
-    m := MemoEdit.Lines.Count;
-    while (y < MemoEdit.ClientRect.Bottom) and (n <= m) do
-    begin
-      TextOut(4, 4 + y, IntToStr(n));
-      Inc(y, h);
-      Inc(n);
-    end;
-  end;
-end;
-
-procedure TFrameMain.LMPaintLine(var msg: TMsg);
-begin
-  PaintBoxLine.Invalidate;
-end;
-
-procedure TFrameMain.SearchText(AMemo: TMemo; AText: string; AStartPos: Integer
-  );
-var
-  found, done: Boolean;
-  lpos, npos: Integer;
-  s, sm: string;
-begin
-  done := False;
-  while not done do
-  begin
-    npos := AStartPos;
-    Inc(npos);
-    found := False;
-    sm := AMemo.Text;
-    s := Copy(sm, npos, Length(AText));
-    lpos := Length(sm);
-    Inc(npos, Length(AText));
-    while (npos <= lpos) and not found do
-    begin
-      found := CompareText(AText, s) = 0;
-      if not found then
-      begin
-        Delete(s, 1, 1);
-        s := s + Copy(sm, npos, 1);
-        Inc(npos);
-      end;
-    end;
-    if not found and (AStartPos > 0) then
-    begin
-      done := MessageDlg('Can not find search text any more.'#13#10'Do you want to continue search from start?',
-        mtWarning, [mbYes, mbNo], 0) = mrNo;
-      if not done then AStartPos := 0;
-    end
-    else done := True;
-  end;
-  if found then
-  begin
-    AMemo.SelStart := npos - Length(AText) - 1;
-    AMemo.SelLength := Length(AText);
-    AMemo.SetFocus;
+    frm.MemoEdit.SetFocus;
   end
-  else if AStartPos = 0 then ShowMessage(Format('Can not find any search text. [%s]', [AText]))
+  else if PageMain.PageIndex > 0 then
+  begin
+    frm := FEditFrames[PageMain.PageIndex - 1];
+    EditFrameChanged(frm);
+    frm.MemoEdit.SetFocus;
+  end
+  else
+  begin
+    EditFileName.Text := FCompileFile;
+    MemoOutput.SetFocus;
+  end;
+  UpdateButton;
 end;
 
-procedure TFrameMain.SelectWord(AMemo: TMemo);
-const
-  IgnoreChar = #9#10#13' !@#$%^&*()_+-=~`[]{}\|/.,:;<>"''';
+procedure TFrameMain.UpdateButton;
 var
-  n, nl, ns: Integer;
-  done, is_delim: Boolean;
-  s: string;
+  frm: TFrameEdit;
 begin
-  s := AMemo.Text;
-  ns := Length(s);
-  if FSelStart >= ns then Exit;
-  n := FSelStart + 1;
-  is_delim := Pos(s[n], IgnoreChar) > 0;
-  nl := 0;
-  done := False;
-  while (n <= ns) and not done do
+  if PageMain.TabIndex = 0 then
   begin
-    done := Pos(s[n], IgnoreChar) > 0;
-    if is_delim then done := not done;
-    if not done then Inc(nl);
-    Inc(n);
-  end;
-  n := FSelStart;
-  done := False;
-  while (n > 0) and not done do
+    ActionSave.Enabled := False;
+    ActionSaveAs.Enabled := False;
+    ActionBrowse.Enabled := True;
+    ActionAssemble.Enabled := False;
+    ActionGoto.Enabled := FCompileFile <> '';
+    ActionNew.Enabled := True;
+    ActionClose.Enabled := False;
+    CheckOverwrite.Enabled := False;
+    EditFileName.Enabled := True;
+  end
+  else
   begin
-    done := Pos(s[n], IgnoreChar) > 0;
-    if is_delim then done := not done;
-    if not done then
-    begin
-      Dec(FSelStart);
-      Inc(nl);
-    end;
-    Dec(n);
+    frm := FEditFrames[PageMain.TabIndex - 1];
+    ActionSave.Enabled := frm.Changed;
+    ActionSaveAs.Enabled := True;
+    ActionBrowse.Enabled := True;
+    ActionAssemble.Enabled := True;
+    ActionGoto.Enabled := True;
+    ActionNew.Enabled := True;
+    ActionClose.Enabled := True;
+    CheckOverwrite.Enabled := True;
+    CheckOverwrite.Checked := frm.Overwrited;
+    EditFileName.Enabled := True;
   end;
-  AMemo.SelStart := FSelStart;
-  AMemo.SelLength := nl;
+end;
+
+procedure TFrameMain.EditFrameChanged(Sender: TObject);
+var
+  frm: TFrameEdit;
+  n: Integer;
+begin
+  frm := TFrameEdit(Sender);
+  EditFileName.Text := frm.FileName;
+  ActionSave.Enabled := frm.Changed;
+  CheckOverwrite.Checked := frm.Overwrited;
+  n := FEditFrames.IndexOf(frm);
+  if n >= 0 then PageMain.Pages[n + 1].Caption := ExtractFileName(frm.FileName);
 end;
 
 constructor TFrameMain.Create(AOwner: TComponent);
 begin
 	inherited Create(AOwner);
+  FEditFrames := TFrameEditList.Create;
   Compiler := TMXCompiler.Create;
-  ButtonSave.Enabled := False;
-  FChanged := False;
+  ActionSave.Enabled := False;
   FSearchText := '';
+  FCompileFile := '';
+  FNewNumber := 1;
 end;
 
 destructor TFrameMain.Destroy;
 begin
   Compiler.Free;
+  FEditFrames.Free;
   inherited Destroy;
 end;
 
 procedure TFrameMain.FrameCloseQuery(Sender: TObject; var CanClose: boolean);
+var
+  frm: TFrameEdit;
+  n: Integer;
+  s: string;
 begin
-  if FChanged then
+  n := PageMain.PageCount - 1;
+  while (n > 1) and CanClose do
   begin
-    case MessageDlg('Do you want to save changed the document before exit?', mtWarning, [mbYes, mbNo, mbCancel], 0, mbCancel) of
-      mrYes: MemoEdit.Lines.SaveToFile(EditFileName.Text);
-      mrCancel: CanClose := False;
+    Dec(n);
+    frm := FEditFrames[n - 1];
+    if frm.Changed then
+    begin
+      s := '"' + ExtractFileName(frm.FileName) + '"';
+      case MessageDlg(s + ' has changed. Do you want to save changed?', mtWarning, [mbYes, mbNo, mbCancel], 0, mbCancel) of
+        mrYes: ActionSave.Execute;
+        mrCancel: CanClose := False;
+      end;
+      if CanClose then
+      begin
+        FEditFrames.Delete(n - 1);
+        PageMain.Pages[n].Free;
+      end;
     end;
   end;
 end;
@@ -492,7 +454,8 @@ end;
 procedure TFrameMain.FrameShow(Sender: TObject);
 begin
   PageMain.TabIndex := 0;
-  MemoEdit.SetFocus;
+  UpdateButton;
+  MemoOutput.SetFocus;
 end;
 
 end.
