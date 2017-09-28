@@ -426,28 +426,15 @@ end;
 
 procedure TFrameMain.FrameCloseQuery(Sender: TObject; var CanClose: boolean);
 var
-  frm: TFrameEdit;
   n: Integer;
-  s: string;
 begin
-  n := PageMain.PageCount - 1;
-  while (n > 1) and CanClose do
+  while (PageMain.PageCount > 2) and CanClose do
   begin
-    Dec(n);
-    frm := FEditFrames[n - 1];
-    if frm.Changed then
-    begin
-      s := '"' + ExtractFileName(frm.FileName) + '"';
-      case MessageDlg(s + ' has changed. Do you want to save changed?', mtWarning, [mbYes, mbNo, mbCancel], 0, mbCancel) of
-        mrYes: ActionSave.Execute;
-        mrCancel: CanClose := False;
-      end;
-      if CanClose then
-      begin
-        FEditFrames.Delete(n - 1);
-        PageMain.Pages[n].Free;
-      end;
-    end;
+    n := PageMain.PageCount;
+    PageMain.PageIndex := 1;
+    PageMainChange(PageMain);
+    ActionClose.Execute;
+    CanClose := n > PageMain.PageCount;
   end;
 end;
 

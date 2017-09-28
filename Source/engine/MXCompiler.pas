@@ -932,24 +932,27 @@ begin
         AddError('Bad register ' + reg.Text)
       else
       begin
-        if reg.IsIndexReg then
-          AddCode(reg.PreCode)
-        else if reg2.IsIndexReg then AddCode(reg2.PreCode);
+        if reg.IsIndexReg then AddCode(reg.PreCode);
         RequireChar(FLine, ',', True);
         reg2 := FetchRegister(FLine);
         if reg.DifferSize(reg2) then
           AddError('Bad register ' + reg.Text)
         else
         begin
-//          if reg2.IsIndexReg then AddCode(reg2.PreCode);
+          if not reg.IsIndexReg and reg2.IsIndexReg then AddCode(reg2.PreCode);
           if reg.IsByte then
           begin
             if reg2.RegType = rgtValue then
               AddCodes([$C6, reg2.Offset])
             else
-            begin
-              AddCode($80 + reg2.Offset);
-              if reg2.HaveIndex then AddCode(reg2.Index);
+            case reg2.RegType of
+              rgt8, rgtIX, rgtIY:
+              begin
+                AddCode($80 + reg2.Offset);
+                if reg2.HaveIndex then AddCode(reg2.Index);
+              end
+            else
+              AddError(Format('Invalid ADD operation "%s"', [reg2.Text]));
             end;
           end
           else
