@@ -7,6 +7,8 @@ PROGSTART 	equ	0C000h
 
 ; === BSAVE header (7 Bytes) ===
 
+PROGSTART	equ	0C000h
+
 		ORG	PROGSTART - 7
 
 		db	0FEh
