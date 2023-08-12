@@ -1,0 +1,47 @@
+object PageForm: TPageForm
+  Left = 105
+  Height = 518
+  Top = 197
+  Width = 518
+  BorderStyle = bsToolWindow
+  Caption = 'Video Page'
+  ClientHeight = 518
+  ClientWidth = 518
+  Color = clBtnFace
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'Tahoma'
+  FormStyle = fsStayOnTop
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  LCLVersion = '2.2.2.0'
+  Visible = True
+  object PaintPage0: TPaintBox
+    Left = 0
+    Height = 256
+    Top = 0
+    Width = 256
+    OnPaint = PaintPage0Paint
+  end
+  object PaintPage1: TPaintBox
+    Left = 262
+    Height = 256
+    Top = 0
+    Width = 256
+    OnPaint = PaintPage1Paint
+  end
+  object PaintPage2: TPaintBox
+    Left = 0
+    Height = 256
+    Top = 262
+    Width = 256
+    OnPaint = PaintPage2Paint
+  end
+  object PaintPage3: TPaintBox
+    Left = 262
+    Height = 256
+    Top = 262
+    Width = 256
+    OnPaint = PaintPage3Paint
+  end
+end

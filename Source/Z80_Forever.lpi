@@ -1,93 +1,159 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CONFIG>
   <ProjectOptions>
-    <Version Value="10"/>
+    <Version Value="12"/>
     <PathDelim Value="\"/>
     <General>
+      <Flags>
+        <MainUnitHasUsesSectionForAllUnits Value="False"/>
+        <MainUnitHasCreateFormStatements Value="False"/>
+        <MainUnitHasTitleStatement Value="False"/>
+        <MainUnitHasScaledStatement Value="False"/>
+      </Flags>
       <SessionStorage Value="InProjectDir"/>
-      <MainUnit Value="0"/>
-      <Title Value="Z80 Forever"/>
+      <Title Value="Z80_Forever"/>
+      <UseAppBundle Value="False"/>
       <ResourceType Value="res"/>
-      <UseXPManifest Value="True"/>
       <Icon Value="0"/>
+      <Resources Count="39">
+        <Resource_0 FileName="Resources\msx2-basic.bin" Type="RCDATA" ResourceName="MSX2-BASIC"/>
+        <Resource_1 FileName="Resources\msx2-bios.bin" Type="RCDATA" ResourceName="MSX2-BIOS"/>
+        <Resource_2 FileName="Resources\msx2-disk.bin" Type="RCDATA" ResourceName="MSX2-DISK"/>
+        <Resource_3 FileName="Resources\msx2-ext.bin" Type="RCDATA" ResourceName="MSX2-EXT"/>
+        <Resource_4 FileName="Resources\sc0-name.bin" Type="RCDATA" ResourceName="SC0-NAME"/>
+        <Resource_5 FileName="Resources\sc0-pattern.bin" Type="RCDATA" ResourceName="SC0-PATTERN"/>
+        <Resource_6 FileName="Resources\sc1-color.bin" Type="RCDATA" ResourceName="SC1-COLOR"/>
+        <Resource_7 FileName="Resources\sc1-name.bin" Type="RCDATA" ResourceName="SC1-NAME"/>
+        <Resource_8 FileName="Resources\sc1-pattern.bin" Type="RCDATA" ResourceName="SC1-PATTERN"/>
+        <Resource_9 FileName="Resources\sc2-color.bin" Type="RCDATA" ResourceName="SC2-COLOR"/>
+        <Resource_10 FileName="Resources\sc2-color0.bin" Type="RCDATA" ResourceName="SC2-COLOR0"/>
+        <Resource_11 FileName="Resources\sc2-name.bin" Type="RCDATA" ResourceName="SC2-NAME"/>
+        <Resource_12 FileName="Resources\sc2-pattern.bin" Type="RCDATA" ResourceName="SC2-PATTERN"/>
+        <Resource_13 FileName="Resources\sc2-pattern0.bin" Type="RCDATA" ResourceName="SC2-PATTERN0"/>
+        <Resource_14 FileName="Resources\sc3-name.bin" Type="RCDATA" ResourceName="SC3-NAME"/>
+        <Resource_15 FileName="Resources\sc3-pattern.bin" Type="RCDATA" ResourceName="SC3-PATTERN"/>
+        <Resource_16 FileName="Resources\sc4-color.bin" Type="RCDATA" ResourceName="SC4-COLOR"/>
+        <Resource_17 FileName="Resources\sc4-name.bin" Type="RCDATA" ResourceName="SC4-NAME"/>
+        <Resource_18 FileName="Resources\sc4-pattern.bin" Type="RCDATA" ResourceName="SC4-PATTERN"/>
+        <Resource_19 FileName="Resources\sc5-name.bin" Type="RCDATA" ResourceName="SC5-NAME"/>
+        <Resource_20 FileName="Resources\sc6-name-0.bin" Type="RCDATA" ResourceName="SC6-NAME-0"/>
+        <Resource_21 FileName="Resources\sc6-name-1.bin" Type="RCDATA" ResourceName="SC6-NAME-1"/>
+        <Resource_22 FileName="Resources\sc6-name-2.bin" Type="RCDATA" ResourceName="SC6-NAME-2"/>
+        <Resource_23 FileName="Resources\sc6-name-3.bin" Type="RCDATA" ResourceName="SC6-NAME-3"/>
+        <Resource_24 FileName="Resources\sc7-name.bin" Type="RCDATA" ResourceName="SC7-NAME"/>
+        <Resource_25 FileName="Resources\sc8-name.bin" Type="RCDATA" ResourceName="SC8-NAME"/>
+        <Resource_26 FileName="Resources\sc9-color.bin" Type="RCDATA" ResourceName="SC9-COLOR"/>
+        <Resource_27 FileName="Resources\sc9-name.bin" Type="RCDATA" ResourceName="SC9-NAME"/>
+        <Resource_28 FileName="Resources\sc9-pattern.bin" Type="RCDATA" ResourceName="SC9-PATTERN"/>
+        <Resource_29 FileName="Resources\scr-palette.bin" Type="RCDATA" ResourceName="SCR-PALETTE"/>
+        <Resource_30 FileName="Resources\msx2-ram-basic-8000.bin" Type="RCDATA" ResourceName="MSX2-RAM-BASIC-8000"/>
+        <Resource_31 FileName="Resources\msx2-ram-basic-8000-test.bin" Type="RCDATA" ResourceName="MSX2-RAM-BASIC-8000-TEST"/>
+        <Resource_32 FileName="Resources\msx2-ram-basic-C000.bin" Type="RCDATA" ResourceName="MSX2-RAM-BASIC-C000"/>
+        <Resource_33 FileName="Resources\msx2-ram-basic-C000-nodisk.bin" Type="RCDATA" ResourceName="MSX2-RAM-BASIC-C000-NODISK"/>
+        <Resource_34 FileName="Resources\msx2-ram-basic-C000-test.bin" Type="RCDATA" ResourceName="MSX2-RAM-BASIC-C000-TEST"/>
+        <Resource_35 FileName="Resources\msx2-ram-dos-0000.bin" Type="RCDATA" ResourceName="MSX2-RAM-DOS-0000"/>
+        <Resource_36 FileName="Resources\msx2-ram-dos-4000.bin" Type="RCDATA" ResourceName="MSX2-RAM-DOS-4000"/>
+        <Resource_37 FileName="Resources\msx2-ram-dos-8000.bin" Type="RCDATA" ResourceName="MSX2-RAM-DOS-8000"/>
+        <Resource_38 FileName="Resources\msx2-ram-dos-C000.bin" Type="RCDATA" ResourceName="MSX2-RAM-DOS-C000"/>
+      </Resources>
     </General>
-    <i18n>
-      <EnableI18N LFM="False"/>
-    </i18n>
-    <BuildModes Count="1">
-      <Item1 Name="Default" Default="True"/>
+    <BuildModes>
+      <Item Name="Default" Default="True"/>
     </BuildModes>
     <PublishOptions>
       <Version Value="2"/>
+      <DestinationDirectory Value="D:\OneDrive\Taizhang\Develop\Lazarus\Z80-Forever\Package"/>
+      <UseFileFilters Value="True"/>
     </PublishOptions>
     <RunParams>
-      <local>
-        <FormatVersion Value="1"/>
-      </local>
+      <FormatVersion Value="2"/>
     </RunParams>
-    <RequiredPackages Count="1">
-      <Item1>
+    <RequiredPackages>
+      <Item>
         <PackageName Value="LCL"/>
-      </Item1>
+      </Item>
     </RequiredPackages>
-    <Units Count="5">
-      <Unit0>
+    <Units>
+      <Unit>
         <Filename Value="Z80_Forever.lpr"/>
         <IsPartOfProject Value="True"/>
-      </Unit0>
-      <Unit1>
-        <Filename Value="form_theme.pas"/>
+      </Unit>
+      <Unit>
+        <Filename Value="FormMain.pas"/>
         <IsPartOfProject Value="True"/>
-        <ComponentName Value="ThemeForm"/>
+        <ComponentName Value="MainForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-      </Unit1>
-      <Unit2>
-        <Filename Value="frame_main.pas"/>
+      </Unit>
+      <Unit>
+        <Filename Value="Engine\XPVideo.pas"/>
         <IsPartOfProject Value="True"/>
-        <ComponentName Value="FrameMain"/>
+      </Unit>
+      <Unit>
+        <Filename Value="Engine\XPCompiler.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="Engine\XPAffect.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="Engine\XPDebug.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="Engine\XPConfig.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="FormPage.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="PageForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit>
+      <Unit>
+        <Filename Value="FrameEdit.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="EditFrame"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
-      </Unit2>
-      <Unit3>
-        <Filename Value="frame_edit.pas"/>
+      </Unit>
+      <Unit>
+        <Filename Value="Engine\XPClock.pas"/>
         <IsPartOfProject Value="True"/>
-        <ComponentName Value="FrameEdit"/>
-        <HasResources Value="True"/>
-        <ResourceBaseClass Value="Frame"/>
-      </Unit3>
-      <Unit4>
-        <Filename Value="main_routine.pas"/>
+      </Unit>
+      <Unit>
+        <Filename Value="Engine\XPDrive.pas"/>
         <IsPartOfProject Value="True"/>
-      </Unit4>
+      </Unit>
+      <Unit>
+        <Filename Value="Engine\XPSlot.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
     <Version Value="11"/>
     <PathDelim Value="\"/>
     <Target>
-      <Filename Value="..\Z80-Forever"/>
+      <Filename Value="..\Z80-Forever.exe"/>
     </Target>
     <SearchPaths>
-      <IncludeFiles Value="$(ProjOutDir)"/>
-      <OtherUnitFiles Value="engine"/>
+      <IncludeFiles Value="Engine;$(ProjOutDir)"/>
+      <OtherUnitFiles Value="Engine"/>
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Parsing>
       <SyntaxOptions>
         <SyntaxMode Value="Delphi"/>
-        <UseAnsiStrings Value="False"/>
       </SyntaxOptions>
     </Parsing>
-    <CodeGeneration>
-      <SmartLinkUnit Value="True"/>
-      <SmallerCode Value="True"/>
-    </CodeGeneration>
     <Linking>
       <Debugging>
-        <UseExternalDbgSyms Value="True"/>
+        <DebugInfoType Value="dsDwarf2Set"/>
+        <UseValgrind Value="True"/>
       </Debugging>
-      <LinkSmart Value="True"/>
       <Options>
         <Win32>
           <GraphicApplication Value="True"/>
@@ -96,21 +162,22 @@
     </Linking>
     <Other>
       <CompilerMessages>
-        <IgnoredMessages idx5024="True"/>
+        <IgnoredMessages idx6058="True" idx5025="True" idx5024="True"/>
       </CompilerMessages>
+      <CustomOptions Value="-dBorland -dVer150 -dDelphi7 -dCompiler6_Up -dPUREPASCAL"/>
     </Other>
   </CompilerOptions>
   <Debugging>
-    <Exceptions Count="3">
-      <Item1>
+    <Exceptions>
+      <Item>
         <Name Value="EAbort"/>
-      </Item1>
-      <Item2>
+      </Item>
+      <Item>
         <Name Value="ECodetoolError"/>
-      </Item2>
-      <Item3>
+      </Item>
+      <Item>
         <Name Value="EFOpenError"/>
-      </Item3>
+      </Item>
     </Exceptions>
   </Debugging>
 </CONFIG>

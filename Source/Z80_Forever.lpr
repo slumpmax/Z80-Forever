@@ -1,24 +1,27 @@
 program Z80_Forever;
 
-{$mode objfpc}{$H+}
-
-{$R 'resource_main.res' 'resource_main.rc'}
+{$MODE Delphi}
 
 uses
-  {$IFDEF UNIX}{$IFDEF UseCThreads}
-  cthreads,
-  {$ENDIF}{$ENDIF}
-  Interfaces, // this includes the LCL widgetset
-  Forms, form_theme, frame_main, frame_edit, main_routine
-  { you can add units after this };
+  Forms, Interfaces,
+  FormMain in 'FormMain.pas' {MainForm},
+  XPVideo in 'Engine\XPVideo.pas',
+  XPCompiler in 'Engine\XPCompiler.pas',
+  XPAffect in 'Engine\XPAffect.pas',
+  XPDebug in 'Engine\XPDebug.pas',
+  XPConfig in 'Engine\XPConfig.pas',
+  FormPage in 'FormPage.pas' {PageForm},
+  FrameEdit in 'FrameEdit.pas' {EditFrame: TFrame},
+  XPClock in 'Engine\XPClock.pas',
+  XPDrive in 'Engine\XPDrive.pas',
+  XPSlot in 'Engine\XPSlot.pas';
 
 {$R *.res}
 
 begin
-  Application.Title:='Z80 Forever';
-  RequireDerivedFormResource:=True;
   Application.Initialize;
-  Application.CreateForm(TThemeForm, ThemeForm);
+  Application.Title := 'Z80 Forever';
+  Application.CreateForm(TMainForm, MainForm);
+  Application.CreateForm(TPageForm, PageForm);
   Application.Run;
 end.
-

@@ -1,0 +1,56 @@
+object EditFrame: TEditFrame
+  Left = 0
+  Height = 460
+  Top = 0
+  Width = 667
+  Align = alClient
+  ClientHeight = 460
+  ClientWidth = 667
+  TabOrder = 0
+  DesignLeft = 442
+  DesignTop = 214
+  object PaintBoxLine: TPaintBox
+    Left = 0
+    Height = 460
+    Top = 0
+    Width = 53
+    Align = alLeft
+    OnPaint = PaintBoxLinePaint
+  end
+  object MemoEdit: TMemo
+    Left = 53
+    Height = 460
+    Top = 0
+    Width = 614
+    Align = alClient
+    BorderStyle = bsNone
+    Font.Color = clWindowText
+    Font.Height = -15
+    Font.Name = 'Consolas'
+    Font.Pitch = fpFixed
+    OnChange = MemoEditChange
+    OnClick = MemoEditClick
+    OnDblClick = MemoEditDblClick
+    OnKeyDown = MemoEditKeyDown
+    OnKeyPress = MemoEditKeyPress
+    OnMouseDown = MemoEditMouseDown
+    ParentFont = False
+    ScrollBars = ssBoth
+    TabOrder = 0
+    WantTabs = True
+    WordWrap = False
+  end
+  object SaveDialog: TSaveDialog
+    DefaultExt = '.asm'
+    Filter = 'Assembly files (*.asm)|*.asm'
+    Options = [ofOverwritePrompt, ofHideReadOnly, ofPathMustExist, ofEnableSizing]
+    Left = 172
+    Top = 41
+  end
+  object OpenSourceDialog: TOpenDialog
+    Filter = 'ASM Files (*.asm)|*.asm|BIN Files (*.bin)|*.bin|COM Files (*.com)|*.com|All support files (*.asm,*.bin,*.com)|*.asm;*.bin;*.com|All Files (*.*)|*.*'
+    FilterIndex = 4
+    Left = 88
+    Top = 41
+  end
+end

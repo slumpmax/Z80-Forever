@@ -3,8 +3,6 @@
 data1		equ	1234h
 data2		equ	5678h
 
-PROGSTART 	equ	0C000h
-
 ; === BSAVE header (7 Bytes) ===
 
 PROGSTART	equ	0C000h
@@ -321,7 +319,8 @@ testjr:
 		ld	(test_data),bc
 		neg
 		retn
-		im	0
+		; im	0
+                db      $ed, $46
 		ld	i,a
 
 		in	c,(c)
@@ -330,7 +329,8 @@ testjr:
 		ld	bc,(test_data)
 		nop
 		reti
-		im	0/1
+		; im	0/1
+                db      $ed, $4e
 		ld	r,a
 
 		in	d,(c)
@@ -339,7 +339,8 @@ testjr:
 		ld	(test_data),de
 		nop
 		retn
-		im	1
+		; im	1
+                db      $ed, $56
 		ld	a,i
 
 		in	e,(c)
@@ -348,7 +349,8 @@ testjr:
 		ld	de,(test_data)
 		nop
 		retn
-		im	2
+		; im	2
+                db      $ed, $5e
 		ld	a,r
 
 		in	h,(c)
@@ -357,7 +359,8 @@ testjr:
 		ld	(test_data),hl
 		nop
 		retn
-		im	0
+		; im	0
+                db      $ed, $66
 		rrd
 
 		in	l,(c)
@@ -366,7 +369,8 @@ testjr:
 		ld	hl,(test_data)
 		nop
 		retn
-		im	0/1
+		; im	0/1
+                db      $ed, $6e
 		rld
 
 		nop
@@ -375,7 +379,8 @@ testjr:
 		ld	(test_data),sp
 		nop
 		retn
-		im	1
+		; im	1
+                db      $ed, $76
 		nop
 
 		in	a,(c)
@@ -384,7 +389,8 @@ testjr:
 		ld	sp,(test_data)
 		nop
 		retn
-		im	2
+		; im	2
+                db      $ed, $7e
 		nop
 
 		ldi
@@ -580,8 +586,8 @@ testjr:
 		bit	7,l
 		bit	7,(hl)
 		bit	7,a
-		bit	7,(ix + 200)
-		bit	7,(iy - 400)
+		bit	7,(ix + 127)
+		bit	7,(iy - 128)
 
 		res	0,b
 		res	0,c

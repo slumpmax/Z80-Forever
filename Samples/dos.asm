@@ -19,7 +19,6 @@ test_data:
 		dw	3 + (data2 - 5) 
 
 testjr:
-		mov	hl,sp
 		nop
 		ld	bc,data1
 		ld	(bc),a
@@ -314,7 +313,7 @@ testjr:
 		ld	(test_data),bc
 		neg
 		retn
-		im	0
+		; im	0
 		ld	i,a
 
 		in	c,(c)
@@ -323,7 +322,7 @@ testjr:
 		ld	bc,(test_data)
 		nop
 		reti
-		im	0/1
+		; im	0/1
 		ld	r,a
 
 		in	d,(c)
@@ -332,7 +331,7 @@ testjr:
 		ld	(test_data),de
 		nop
 		retn
-		im	1
+		; im	1
 		ld	a,i
 
 		in	e,(c)
@@ -341,7 +340,7 @@ testjr:
 		ld	de,(test_data)
 		nop
 		retn
-		im	2
+		; im	2
 		ld	a,r
 
 		in	h,(c)
@@ -350,7 +349,7 @@ testjr:
 		ld	(test_data),hl
 		nop
 		retn
-		im	0
+		; im	0
 		rrd
 
 		in	l,(c)
@@ -359,7 +358,7 @@ testjr:
 		ld	hl,(test_data)
 		nop
 		retn
-		im	0/1
+		; im	0/1
 		rld
 
 		nop
@@ -368,7 +367,7 @@ testjr:
 		ld	(test_data),sp
 		nop
 		retn
-		im	1
+		; im	1
 		nop
 
 		in	a,(c)
@@ -377,7 +376,7 @@ testjr:
 		ld	sp,(test_data)
 		nop
 		retn
-		im	2
+		; im	2
 		nop
 
 		ldi
