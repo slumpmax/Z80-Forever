@@ -15,7 +15,7 @@
 * **CTRL+Y**   *Delete current line*
 * **CTRL+S**   *Save Assembly file*
 * **CTRL+N**   *Create new Assembly document*
-* ** HOME**   *Move to the beginning of the line or the first letter of line
+* **HOME**   *Move to the beginning of the line or the first letter of line
 * Click on preview at debug tab to show/hide VRAM preview
 
 ### Some code support
