@@ -3,8 +3,9 @@
 
 ### Features
 * Open *.ASM for edit and assemble.
-* Open *.BIN and auto disassemble it.
-* Open *.COM and auto disassemble it.
+* Open *.BIN and auto disassemble it. <em><strong>(temporarily suspended)</strong></em>
+* Open *.COM and auto disassemble it. <em><strong>(temporarily suspended)</strong></em>
+* Added debugging features.
 
 ### Some keyboard shortcuts
 * **CTRL+A**   *Select all text in current editor*
@@ -13,8 +14,9 @@
 * **CTRL+G**   *Goto line number*
 * **CTRL+Y**   *Delete current line*
 * **CTRL+S**   *Save Assembly file*
-* **CTRL+SHIFT+S**   *Save Assembly file as other*
 * **CTRL+N**   *Create new Assembly document*
+* ** HOME**   *Move to the beginning of the line or the first letter of line
+* Click on preview at debug tab to show/hide VRAM preview
 
 ### Some code support
 * DB, .DB, DEFB, .DEFB and all other case are same as DB
@@ -24,5 +26,8 @@
 
 ### Not support now
 * DB with string
-* INCLUDE other Assembly files.
-* MACRO support.
+
+### New feature but no document
+* Include other files
+* Structure data
+* Etc
